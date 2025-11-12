@@ -36,24 +36,43 @@ class CardDTO
      */
     public static function fromScryfallData(array $data): self
     {
+        // Handle double-faced cards (transform, modal_dfc, etc.)
+        // For these layouts, some data is only in card_faces
+        $hasFaces = isset($data['card_faces']) && is_array($data['card_faces']) && count($data['card_faces']) > 0;
+        $firstFace = $hasFaces ? $data['card_faces'][0] : [];
+        
+        // Image URIs: use root level first, fallback to first face
+        $imageUris = $data['image_uris'] ?? ($firstFace['image_uris'] ?? null);
+        
+        // Mana cost: use root level first, fallback to first face
+        $manaCost = $data['mana_cost'] ?? ($firstFace['mana_cost'] ?? null);
+        
+        // Oracle text: use root level first, fallback to first face
+        $oracleText = $data['oracle_text'] ?? ($firstFace['oracle_text'] ?? null);
+        
+        // Power/Toughness/Loyalty: use root level first, fallback to first face
+        $power = $data['power'] ?? ($firstFace['power'] ?? null);
+        $toughness = $data['toughness'] ?? ($firstFace['toughness'] ?? null);
+        $loyalty = $data['loyalty'] ?? ($firstFace['loyalty'] ?? null);
+        
         return new self(
             id: $data['id'] ?? '',
             name: $data['name'] ?? 'Unknown Card',
-            manaCost: $data['mana_cost'] ?? null,
+            manaCost: $manaCost,
             typeLine: $data['type_line'] ?? null,
-            oracleText: $data['oracle_text'] ?? null,
-            power: $data['power'] ?? null,
-            toughness: $data['toughness'] ?? null,
-            loyalty: $data['loyalty'] ?? null,
+            oracleText: $oracleText,
+            power: $power,
+            toughness: $toughness,
+            loyalty: $loyalty,
             colors: $data['colors'] ?? [],
             colorIdentity: $data['color_identity'] ?? [],
             setCode: $data['set'] ?? null,
             setName: $data['set_name'] ?? null,
             rarity: $data['rarity'] ?? null,
-            imageUriSmall: $data['image_uris']['small'] ?? null,
-            imageUriNormal: $data['image_uris']['normal'] ?? null,
-            imageUriLarge: $data['image_uris']['large'] ?? null,
-            imageUriArtCrop: $data['image_uris']['art_crop'] ?? null,
+            imageUriSmall: $imageUris['small'] ?? null,
+            imageUriNormal: $imageUris['normal'] ?? null,
+            imageUriLarge: $imageUris['large'] ?? null,
+            imageUriArtCrop: $imageUris['art_crop'] ?? null,
             eurPrice: isset($data['prices']['eur']) ? (float)$data['prices']['eur'] : null,
             usdPrice: isset($data['prices']['usd']) ? (float)$data['prices']['usd'] : null,
             scryfallUri: $data['scryfall_uri'] ?? null,

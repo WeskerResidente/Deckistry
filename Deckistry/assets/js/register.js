@@ -1,18 +1,64 @@
 /**
  * Registration Form - AJAX validation and password strength checker
  */
-document.addEventListener('DOMContentLoaded', function () {
-  const form = document.getElementById('registration-form');
-  const pseudoField = document.querySelector('[name="registration_form[username]"]');
-  const emailField = document.querySelector('[name="registration_form[email]"]');
-  const passwordField = document.querySelector('[name="registration_form[plainPassword][first]"]');
-  const confirmField = document.querySelector('[name="registration_form[plainPassword][second]"]');
-  const registerBtn = document.getElementById('register-btn');
+(function() {
+  // Prevent multiple executions
+  if (window.registerFormInitialized) {
+    console.log('Register form already initialized, skipping...');
+    return;
+  }
+  window.registerFormInitialized = true;
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('registration-form');
+    if (!form) {
+      console.error('Registration form not found');
+      return;
+    }
+
+    // Try to find fields by name attribute first, then by ID pattern
+    const pseudoField = document.querySelector('[name="registration_form[username]"]') || 
+                        document.querySelector('input[id*="username"]');
+    const emailField = document.querySelector('[name="registration_form[email]"]') || 
+                       document.querySelector('input[id*="email"]');
+    const passwordField = document.querySelector('[name="registration_form[plainPassword][first]"]') || 
+                          document.querySelector('input[id*="plainPassword_first"]');
+    const confirmField = document.querySelector('[name="registration_form[plainPassword][second]"]') || 
+                         document.querySelector('input[id*="plainPassword_second"]');
+    const registerBtn = document.getElementById('register-btn');
+
+    // Debug: log if fields are found
+    console.log('Form elements found:', {
+      form: !!form,
+      pseudoField: !!pseudoField,
+      emailField: !!emailField,
+      passwordField: !!passwordField,
+      confirmField: !!confirmField,
+      registerBtn: !!registerBtn
+    });
+
+    if (!pseudoField || !emailField || !passwordField || !confirmField || !registerBtn) {
+      console.error('Some form fields are missing');
+      return;
+    }
+
+    // Prevent re-initialization of already initialized fields
+    if (pseudoField.dataset.initialized) {
+      console.log('Form fields already initialized, skipping...');
+      return;
+    }
+    pseudoField.dataset.initialized = 'true';
+    emailField.dataset.initialized = 'true';
+    passwordField.dataset.initialized = 'true';
+    confirmField.dataset.initialized = 'true';
   
-  // Create error container for confirm password
-  const confirmError = document.createElement('div');
-  confirmError.className = 'form-error';
-  confirmField.parentNode.appendChild(confirmError);
+  // Create error container for confirm password (check if already exists)
+  let confirmError = confirmField.parentNode.querySelector('.form-error');
+  if (!confirmError) {
+    confirmError = document.createElement('div');
+    confirmError.className = 'form-error';
+    confirmField.parentNode.appendChild(confirmError);
+  }
   
   // Validation state
   let isPseudoValid = false;
@@ -185,9 +231,14 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function createErrorBox(field) {
-    let box = document.createElement('div');
-    box.className = 'form-error';
-    field.parentNode.appendChild(box);
+    // Check if error box already exists
+    let box = field.parentNode.querySelector('.form-error');
+    if (!box) {
+      box = document.createElement('div');
+      box.className = 'form-error';
+      field.parentNode.appendChild(box);
+    }
     return box;
   }
-});
+  });
+})();

@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const userMenuToggle = document.getElementById('userMenuToggle');
     if (userMenuToggle) {
         userMenuToggle.addEventListener('click', function(e) {
+            e.preventDefault();
             e.stopPropagation();
             const userMenu = document.getElementById('userMenu');
             if (userMenu) {
@@ -27,6 +28,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Close dropdowns when clicking outside
     document.addEventListener('click', function(event) {
+        // Allow clicks on dropdown items (links)
+        if (event.target.closest('.dropdown-item')) {
+            return; // Let the link work normally
+        }
+        
         if (!event.target.closest('.header-user')) {
             const userMenu = document.getElementById('userMenu');
             if (userMenu) {

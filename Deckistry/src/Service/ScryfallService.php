@@ -230,6 +230,49 @@ class ScryfallService
     }
 
     /**
+     * Get all MTG sets/editions
+     * 
+     * @return array Array of sets with 'code', 'name', 'released_at'
+     */
+    public function getSets(): array
+    {
+        $cacheKey = "scryfall_sets";
+        
+        return $this->cache->get($cacheKey, function (ItemInterface $item) {
+            $item->expiresAfter(86400); // Cache for 24 hours
+            
+            try {
+                $response = $this->httpClient->request('GET', self::BASE_URL . '/sets');
+
+                $data = $response->toArray();
+                
+                // Filter and map sets to only include relevant info
+                $sets = array_map(function($set) {
+                    return [
+                        'code' => $set['code'],
+                        'name' => $set['name'],
+                        'released_at' => $set['released_at'] ?? null,
+                        'set_type' => $set['set_type'] ?? null,
+                    ];
+                }, $data['data'] ?? []);
+                
+                // Sort by name (alphabetical order)
+                usort($sets, function($a, $b) {
+                    return strcasecmp($a['name'], $b['name']);
+                });
+                
+                return $sets;
+                
+            } catch (TransportExceptionInterface $e) {
+                $this->logger->error('Scryfall API sets error', [
+                    'error' => $e->getMessage()
+                ]);
+                return [];
+            }
+        });
+    }
+
+    /**
      * Clear cache for a specific card ID
      */
     public function clearCardCache(string $scryfallId): void

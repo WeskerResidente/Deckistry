@@ -1,0 +1,140 @@
+// =============================================================================
+// LOGIN PAGE
+// =============================================================================
+
+.page-login {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: spacing(8) spacing(4);
+  background: linear-gradient(135deg, $gray-900 0%, $gray-800 100%);
+}
+
+.form-login {
+  width: 100%;
+  max-width: 420px;
+  background: $gray-800;
+  padding: spacing(8);
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-lg;
+}
+
+.login-title {
+  margin-bottom: spacing(6);
+  text-align: center;
+  color: $white;
+}
+
+.login-info {
+  margin-bottom: spacing(4);
+  padding: spacing(3);
+  background: rgba($accent, 0.1);
+  border-radius: $border-radius;
+  color: $text-secondary;
+  text-align: center;
+  
+  a {
+    color: $accent;
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.login-error {
+  margin-bottom: spacing(4);
+  padding: spacing(3);
+  background: rgba($danger, 0.1);
+  border: 1px solid rgba($danger, 0.3);
+  border-radius: $border-radius;
+  color: $danger;
+}
+
+.login-field {
+  margin-bottom: spacing(4);
+  
+  label {
+    display: block;
+    margin-bottom: spacing(2);
+    color: $text-secondary;
+    font-weight: $font-weight-medium;
+  }
+  
+  // Checkbox label style
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: spacing(2);
+    cursor: pointer;
+    user-select: none;
+    
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      cursor: pointer;
+      accent-color: $accent;
+      
+      &:focus {
+        outline: 2px solid $accent;
+        outline-offset: 2px;
+      }
+    }
+    
+    span {
+      color: $text-secondary;
+      font-size: $font-size-sm;
+    }
+    
+    &:hover span {
+      color: $white;
+    }
+  }
+}
+
+.input-login {
+  width: 100%;
+  padding: spacing(3);
+  background: $gray-700;
+  border: 1px solid $gray-600;
+  border-radius: $border-radius;
+  color: $white;
+  font-size: $font-size-base;
+  transition: $transition-base;
+  
+  &:focus {
+    outline: none;
+    border-color: $accent;
+    box-shadow: 0 0 0 3px rgba($accent, 0.1);
+  }
+  
+  &::placeholder {
+    color: $text-muted;
+  }
+}
+
+.btn-login {
+  width: 100%;
+  padding: spacing(3);
+  background: $accent;
+  color: $white;
+  border: none;
+  border-radius: $border-radius;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition-base;
+  
+  &:hover {
+    background: lighten($accent, 5%);
+    transform: translateY(-1px);
+    box-shadow: $shadow-md;
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
