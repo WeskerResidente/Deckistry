@@ -1,0 +1,197 @@
+// =============================================================================
+// COLORS
+// =============================================================================
+
+// Magic: The Gathering color palette
+$mtg-white: #F8F6D8;
+$mtg-blue: #0E68AB;
+$mtg-black: #150B00;
+$mtg-red: #D3202A;
+$mtg-green: #00733E;
+
+// Extended color palette
+$primary: #6CB7BC;
+$secondary: #FFFFFF;
+$accent: #656565;
+$highlight: #0048FF;
+
+// Neutral colors
+$white: #ffffff;
+$black: #000000;
+$gray-100: #f8f9fa;
+$gray-200: #e9ecef;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #adb5bd;
+$gray-600: #6c757d;
+$gray-700: #495057;
+$gray-800: #343a40;
+$gray-900: #212529;
+
+// Semantic colors
+$success: #28a745;
+$info: #17a2b8;
+$warning: #ffc107;
+$danger: #dc3545;
+
+// Background colors
+$bg-primary: $primary;
+$bg-secondary: $secondary;
+$bg-light: $gray-100;
+$bg-dark: $gray-900;
+
+// Text colors
+$text-primary: $primary;
+$text-secondary: $secondary;
+$text-light: $white;
+$text-muted: $gray-500;
+
+// =============================================================================
+// TYPOGRAPHY
+// =============================================================================
+
+// Font families
+$font-primary: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+$font-secondary: Georgia, "Times New Roman", serif;
+$font-mono: "Courier New", Courier, monospace;
+$font-display: "Cinzel", serif; // Pour les titres Magic-themed
+
+// Font sizes
+$font-size-base: 1rem;
+$font-size-xs: 0.75rem;
+$font-size-sm: 0.875rem;
+$font-size-lg: 1.125rem;
+$font-size-xl: 1.25rem;
+$font-size-2xl: 1.5rem;
+$font-size-3xl: 1.875rem;
+$font-size-4xl: 2.25rem;
+$font-size-5xl: 3rem;
+
+// Font weights
+$font-weight-light: 300;
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$font-weight-black: 900;
+
+// Line heights
+$line-height-tight: 1.25;
+$line-height-normal: 1.5;
+$line-height-relaxed: 1.75;
+$line-height-loose: 2;
+
+// =============================================================================
+// SPACING
+// =============================================================================
+
+$spacer: 1rem;
+$spacers: (
+  0: 0,
+  1: $spacer * 0.25,    // 4px
+  2: $spacer * 0.5,     // 8px
+  3: $spacer * 0.75,    // 12px
+  4: $spacer,           // 16px
+  5: $spacer * 1.5,     // 24px
+  6: $spacer * 2,       // 32px
+  7: $spacer * 3,       // 48px
+  8: $spacer * 4,       // 64px
+  9: $spacer * 6,       // 96px
+  10: $spacer * 8,      // 128px
+);
+
+// =============================================================================
+// SIZING
+// =============================================================================
+
+// Breakpoints
+$breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px
+);
+
+// Container widths
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1140px,
+  xxl: 1320px
+);
+
+// =============================================================================
+// BORDERS
+// =============================================================================
+
+$border-width: 1px;
+$border-color: $gray-300;
+$border-radius: 0.25rem;
+$border-radius-sm: 0.125rem;
+$border-radius-lg: 0.5rem;
+$border-radius-xl: 1rem;
+$border-radius-pill: 50rem;
+$border-radius-circle: 50%;
+
+// =============================================================================
+// SHADOWS
+// =============================================================================
+
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+$shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+$shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+$shadow-none: none;
+
+// Card specific shadows
+$card-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+$card-shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.2);
+
+// =============================================================================
+// TRANSITIONS
+// =============================================================================
+
+$transition-base: all 0.2s ease-in-out;
+$transition-fast: all 0.15s ease-in-out;
+$transition-slow: all 0.3s ease-in-out;
+
+// =============================================================================
+// Z-INDEX
+// =============================================================================
+
+$zindex-dropdown: 1000;
+$zindex-sticky: 1020;
+$zindex-fixed: 1030;
+$zindex-modal-backdrop: 1040;
+$zindex-modal: 1050;
+$zindex-popover: 1060;
+$zindex-tooltip: 1070;
+
+// =============================================================================
+// MAGIC CARD SPECIFIC
+// =============================================================================
+
+// Card dimensions (ratio 2.5:3.5 standard Magic card)
+$card-width: 250px;
+$card-height: 350px;
+$card-aspect-ratio: 1.4; // 350/250
+
+// Card rarity colors
+$rarity-common: #1a1a1a;
+$rarity-uncommon: #707070;
+$rarity-rare: #c9b037;
+$rarity-mythic: #d04c23;
+
+// Mana symbols colors
+$mana-white: $mtg-white;
+$mana-blue: $mtg-blue;
+$mana-black: $mtg-black;
+$mana-red: $mtg-red;
+$mana-green: $mtg-green;
+$mana-colorless: #ccc;

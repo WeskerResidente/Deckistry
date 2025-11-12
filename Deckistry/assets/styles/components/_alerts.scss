@@ -1,0 +1,423 @@
+// =============================================================================
+// ALERTS
+// =============================================================================
+
+.alert {
+  position: relative;
+  padding: spacing(4) spacing(5);
+  margin-bottom: spacing(4);
+  border: 1px solid transparent;
+  border-radius: $border-radius;
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+}
+
+.alert-dismissible {
+  padding-right: spacing(10);
+  
+  .alert-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: spacing(4) spacing(5);
+    color: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: $transition-base;
+    
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.alert-heading {
+  color: inherit;
+  margin-top: 0;
+  margin-bottom: spacing(2);
+  font-weight: $font-weight-bold;
+}
+
+.alert-link {
+  font-weight: $font-weight-bold;
+  text-decoration: underline;
+  
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+// Alert with icon
+.alert-with-icon {
+  display: flex;
+  align-items: flex-start;
+  gap: spacing(3);
+  
+  .alert-icon {
+    flex-shrink: 0;
+    font-size: $font-size-xl;
+    margin-top: spacing(0.5);
+  }
+  
+  .alert-content {
+    flex: 1;
+  }
+}
+
+// Alert variants
+.alert-primary {
+  color: darken($primary, 10%);
+  background-color: lighten($primary, 45%);
+  border-color: lighten($primary, 40%);
+  
+  .alert-link {
+    color: darken($primary, 20%);
+  }
+}
+
+.alert-secondary {
+  color: lighten($secondary, 40%);
+  background-color: darken($secondary, 5%);
+  border-color: $secondary;
+  
+  .alert-link {
+    color: lighten($secondary, 50%);
+  }
+}
+
+.alert-success {
+  color: darken($success, 10%);
+  background-color: lighten($success, 45%);
+  border-color: lighten($success, 40%);
+  
+  .alert-link {
+    color: darken($success, 20%);
+  }
+}
+
+.alert-danger {
+  color: darken($danger, 10%);
+  background-color: lighten($danger, 40%);
+  border-color: lighten($danger, 35%);
+  
+  .alert-link {
+    color: darken($danger, 20%);
+  }
+}
+
+.alert-warning {
+  color: darken($warning, 20%);
+  background-color: lighten($warning, 35%);
+  border-color: lighten($warning, 30%);
+  
+  .alert-link {
+    color: darken($warning, 30%);
+  }
+}
+
+.alert-info {
+  color: darken($info, 10%);
+  background-color: lighten($info, 45%);
+  border-color: lighten($info, 40%);
+  
+  .alert-link {
+    color: darken($info, 20%);
+  }
+}
+
+.alert-light {
+  color: $gray-700;
+  background-color: $gray-100;
+  border-color: $gray-200;
+  
+  .alert-link {
+    color: $gray-900;
+  }
+}
+
+.alert-dark {
+  color: $white;
+  background-color: $gray-800;
+  border-color: $gray-700;
+  
+  .alert-link {
+    color: $gray-200;
+  }
+}
+
+// =============================================================================
+// TOAST NOTIFICATIONS
+// =============================================================================
+
+.toast-container {
+  position: fixed;
+  z-index: $zindex-sticky;
+  pointer-events: none;
+  
+  &.top-right {
+    top: spacing(5);
+    right: spacing(5);
+  }
+  
+  &.top-left {
+    top: spacing(5);
+    left: spacing(5);
+  }
+  
+  &.bottom-right {
+    bottom: spacing(5);
+    right: spacing(5);
+  }
+  
+  &.bottom-left {
+    bottom: spacing(5);
+    left: spacing(5);
+  }
+  
+  &.top-center {
+    top: spacing(5);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  &.bottom-center {
+    bottom: spacing(5);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+.toast {
+  max-width: 350px;
+  font-size: $font-size-sm;
+  pointer-events: auto;
+  background-color: $white;
+  background-clip: padding-box;
+  border: 1px solid rgba($black, 0.1);
+  box-shadow: $shadow-lg;
+  border-radius: $border-radius;
+  margin-bottom: spacing(3);
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translateY(-10px);
+  
+  &.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  &.hiding {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+}
+
+.toast-header {
+  display: flex;
+  align-items: center;
+  padding: spacing(2) spacing(3);
+  color: $text-secondary;
+  background-color: $gray-500;
+  background-clip: padding-box;
+  border-bottom: 1px solid rgba($black, 0.05);
+  border-top-left-radius: $border-radius;
+  border-top-right-radius: $border-radius;
+}
+
+.toast-icon {
+  flex-shrink: 0;
+  margin-right: spacing(2);
+  font-size: $font-size-lg;
+}
+
+.toast-title {
+  flex: 1;
+  font-weight: $font-weight-bold;
+  margin: 0;
+}
+
+.toast-close {
+  margin-left: spacing(3);
+  background: none;
+  border: none;
+  color: $text-muted;
+  cursor: pointer;
+  padding: 0;
+  font-size: $font-size-lg;
+  line-height: 1;
+  transition: $transition-base;
+  
+  &:hover {
+    color: $text-primary;
+  }
+}
+
+.toast-body {
+  padding: spacing(3);
+  word-wrap: break-word;
+}
+
+// Toast variants
+.toast-success {
+  border-left: 4px solid $success;
+  
+  .toast-icon {
+    color: $success;
+  }
+}
+
+.toast-danger {
+  border-left: 4px solid $danger;
+  
+  .toast-icon {
+    color: $danger;
+  }
+}
+
+.toast-warning {
+  border-left: 4px solid $warning;
+  
+  .toast-icon {
+    color: $warning;
+  }
+}
+
+.toast-info {
+  border-left: 4px solid $info;
+  
+  .toast-icon {
+    color: $info;
+  }
+}
+
+// =============================================================================
+// PROGRESS BARS
+// =============================================================================
+
+.progress {
+  display: flex;
+  height: 1rem;
+  overflow: hidden;
+  font-size: $font-size-xs;
+  background-color: $gray-200;
+  border-radius: $border-radius;
+  box-shadow: inset 0 1px 2px rgba($black, 0.1);
+}
+
+.progress-bar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  color: $white;
+  text-align: center;
+  white-space: nowrap;
+  background-color: $accent;
+  transition: width 0.6s ease;
+}
+
+.progress-bar-striped {
+  background-image: linear-gradient(
+    45deg,
+    rgba($white, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba($white, 0.15) 50%,
+    rgba($white, 0.15) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 1rem 1rem;
+}
+
+.progress-bar-animated {
+  animation: progress-bar-stripes 1s linear infinite;
+}
+
+@keyframes progress-bar-stripes {
+  0% {
+    background-position: 1rem 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+// Progress bar variants
+.progress-bar-success {
+  background-color: $success;
+}
+
+.progress-bar-danger {
+  background-color: $danger;
+}
+
+.progress-bar-warning {
+  background-color: $warning;
+}
+
+.progress-bar-info {
+  background-color: $info;
+}
+
+// Progress sizes
+.progress-sm {
+  height: 0.5rem;
+}
+
+.progress-lg {
+  height: 1.5rem;
+  font-size: $font-size-sm;
+}
+
+// =============================================================================
+// LOADING SPINNER
+// =============================================================================
+
+.spinner {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid rgba($accent, 0.2);
+  border-radius: 50%;
+  border-top-color: $accent;
+  animation: spin 0.8s linear infinite;
+}
+
+.spinner-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 2px;
+}
+
+.spinner-lg {
+  width: 3rem;
+  height: 3rem;
+  border-width: 4px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Loading overlay
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba($white, 0.9);
+  @include flex-center;
+  z-index: $zindex-modal;
+  
+  .spinner {
+    width: 4rem;
+    height: 4rem;
+    border-width: 5px;
+  }
+}

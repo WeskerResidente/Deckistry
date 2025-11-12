@@ -1,0 +1,232 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Deckistry - Magic: The Gathering Deck Builder{% endblock %}
+
+{% block body %}
+<!-- Hero Section -->
+<section class="home-hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                Build Your Perfect <span class="highlight">Magic Deck</span>
+            </h1>
+            <p class="hero-description">
+                Create, manage, and share your Magic: The Gathering decks with the ultimate deck building tool.
+                Browse millions of cards from the Scryfall database.
+            </p>
+            <div class="hero-actions">
+                <a href="{{ path('app_register') }}" class="btn btn-lg btn-accent">Get Started Free</a>
+                <a href="{{ path('app_search') }}" class="btn btn-lg btn-secondary">Browse Cards</a>
+            </div>
+            
+            {% if stats is defined %}
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-value">{{ stats.totalUsers|number_format }}</span>
+                    <span class="stat-label">Deck Builders</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">{{ stats.totalDecks|number_format }}</span>
+                    <span class="stat-label">Decks Created</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">1M+</span>
+                    <span class="stat-label">Cards Available</span>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="home-features">
+    <div class="container">
+        <div class="section-intro">
+            <h2>Everything You Need to Build Amazing Decks</h2>
+            <p>Powerful tools designed for both casual players and competitive builders</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🔍</div>
+                <h3>Advanced Card Search</h3>
+                <p>Search through millions of Magic cards with advanced filters for colors, types, mana cost, and more.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🃏</div>
+                <h3>Deck Builder</h3>
+                <p>Intuitive drag-and-drop interface to build and test your decks with mana curve analysis and statistics.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📚</div>
+                <h3>Collection Manager</h3>
+                <p>Track your card collection and see which cards you need to complete your decks.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">💬</div>
+                <h3>Community</h3>
+                <p>Share your decks, get feedback, and discover new strategies from other players.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">⭐</div>
+                <h3>Ratings & Reviews</h3>
+                <p>Rate and review decks to help others find the best strategies for their playstyle.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Deck Analytics</h3>
+                <p>View detailed statistics about your deck including mana curve, color distribution, and card types.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Popular Decks Section -->
+{% if popularDecks is defined and popularDecks|length > 0 %}
+<section class="home-popular-decks">
+    <div class="container">
+        <div class="section-header">
+            <h2>Popular Decks</h2>
+            <a href="{{ path('app_decks') }}" class="view-all-link">View All Decks →</a>
+        </div>
+        
+        <div class="decks-carousel">
+            <div class="decks-track">
+                {% for deck in popularDecks %}
+                <div class="deck-card">
+                    <div class="deck-card-header">
+                        <h3>{{ deck.name }}</h3>
+                    </div>
+                    <div class="deck-card-content">
+                        {% if deck.description %}
+                        <p class="deck-description">{{ deck.description|slice(0, 100) }}{% if deck.description|length > 100 %}...{% endif %}</p>
+                        {% endif %}
+                    </div>
+                    <div class="deck-card-meta">
+                        <span class="meta-item">
+                            <i class="icon">👤</i> {{ deck.user.username }}
+                        </span>
+                        <span class="meta-item">
+                            <i class="icon">💬</i> {{ deck.comments|length }}
+                        </span>
+                        <span class="meta-item">
+                            <i class="icon">⭐</i> {{ deck.ratings|length }}
+                        </span>
+                    </div>
+                    <div class="deck-card-actions">
+                        <a href="{{ path('app_deck_view', {id: deck.id}) }}" class="btn btn-sm btn-primary">View Deck</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Recent Decks Section -->
+{% if recentDecks is defined and recentDecks|length > 0 %}
+<section class="home-popular-decks" style="background-color: #f8f9fa;">
+    <div class="container">
+        <div class="section-header">
+            <h2>Recently Created Decks</h2>
+            <a href="{{ path('app_decks') }}" class="view-all-link">View All →</a>
+        </div>
+        
+        <div class="cards-grid grid-3">
+            {% for deck in recentDecks|slice(0, 3) %}
+            <div class="deck-card">
+                <div class="deck-card-header">
+                    <h3>{{ deck.name }}</h3>
+                </div>
+                <div class="deck-card-content">
+                    {% if deck.description %}
+                    <p class="deck-description">{{ deck.description|slice(0, 80) }}{% if deck.description|length > 80 %}...{% endif %}</p>
+                    {% endif %}
+                    <p class="deck-date">
+                        <small>Created {{ deck.createdAt|date('F j, Y') }}</small>
+                    </p>
+                </div>
+                <div class="deck-card-meta">
+                    <span class="meta-item">
+                        <i class="icon">👤</i> {{ deck.user.username }}
+                    </span>
+                </div>
+                <div class="deck-card-actions">
+                    <a href="{{ path('app_deck_view', {id: deck.id}) }}" class="btn btn-sm btn-primary">View Deck</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- CTA Section -->
+<section class="home-cta">
+    <div class="container">
+        <h2>Ready to Build Your Next Winning Deck?</h2>
+        <p>Join thousands of Magic players building and sharing their decks</p>
+        <div class="cta-actions">
+            <a href="{{ path('app_register') }}" class="btn btn-lg btn-light">Create Free Account</a>
+            <a href="{{ path('app_deck_builder') }}" class="btn btn-lg btn-outline-light">Start Building</a>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="home-testimonials">
+    <div class="container">
+        <div class="section-intro">
+            <h2>What Players Are Saying</h2>
+        </div>
+        
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-quote">
+                    "Deckistry has completely changed how I build and test my decks. The interface is intuitive and the Scryfall integration is seamless."
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">🧙</div>
+                    <div class="author-info">
+                        <span class="author-name">Sarah Mitchell</span>
+                        <span class="author-title">Competitive Player</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-quote">
+                    "The collection manager is a game changer. I can finally keep track of all my cards and know exactly what I need for my next deck."
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">⚔️</div>
+                    <div class="author-info">
+                        <span class="author-name">Marcus Chen</span>
+                        <span class="author-title">Casual Player</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-quote">
+                    "Best deck builder I've used. The community features are great and I've discovered so many cool deck ideas from other players."
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">🎴</div>
+                    <div class="author-info">
+                        <span class="author-name">Emma Rodriguez</span>
+                        <span class="author-title">EDH Enthusiast</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

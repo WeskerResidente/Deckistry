@@ -1,0 +1,405 @@
+// =============================================================================
+// UTILITY CLASSES
+// =============================================================================
+
+// Display
+.d-none {
+  display: none !important;
+}
+
+.d-block {
+  display: block !important;
+}
+
+.d-inline {
+  display: inline !important;
+}
+
+.d-inline-block {
+  display: inline-block !important;
+}
+
+.d-flex {
+  display: flex !important;
+}
+
+.d-inline-flex {
+  display: inline-flex !important;
+}
+
+.d-grid {
+  display: grid !important;
+}
+
+// Flexbox utilities
+.flex-row {
+  flex-direction: row !important;
+}
+
+.flex-column {
+  flex-direction: column !important;
+}
+
+.flex-wrap {
+  flex-wrap: wrap !important;
+}
+
+.flex-nowrap {
+  flex-wrap: nowrap !important;
+}
+
+.justify-start {
+  justify-content: flex-start !important;
+}
+
+.justify-end {
+  justify-content: flex-end !important;
+}
+
+.justify-center {
+  justify-content: center !important;
+}
+
+.justify-between {
+  justify-content: space-between !important;
+}
+
+.justify-around {
+  justify-content: space-around !important;
+}
+
+.align-start {
+  align-items: flex-start !important;
+}
+
+.align-end {
+  align-items: flex-end !important;
+}
+
+.align-center {
+  align-items: center !important;
+}
+
+.align-stretch {
+  align-items: stretch !important;
+}
+
+.gap-1 {
+  gap: spacing(1) !important;
+}
+
+.gap-2 {
+  gap: spacing(2) !important;
+}
+
+.gap-3 {
+  gap: spacing(3) !important;
+}
+
+.gap-4 {
+  gap: spacing(4) !important;
+}
+
+.gap-5 {
+  gap: spacing(5) !important;
+}
+
+.gap-6 {
+  gap: spacing(6) !important;
+}
+
+// Spacing utilities (margin & padding)
+@each $key, $value in $spacers {
+  // Margin
+  .m-#{$key} {
+    margin: $value !important;
+  }
+  
+  .mt-#{$key} {
+    margin-top: $value !important;
+  }
+  
+  .mr-#{$key} {
+    margin-right: $value !important;
+  }
+  
+  .mb-#{$key} {
+    margin-bottom: $value !important;
+  }
+  
+  .ml-#{$key} {
+    margin-left: $value !important;
+  }
+  
+  .mx-#{$key} {
+    margin-left: $value !important;
+    margin-right: $value !important;
+  }
+  
+  .my-#{$key} {
+    margin-top: $value !important;
+    margin-bottom: $value !important;
+  }
+  
+  // Padding
+  .p-#{$key} {
+    padding: $value !important;
+  }
+  
+  .pt-#{$key} {
+    padding-top: $value !important;
+  }
+  
+  .pr-#{$key} {
+    padding-right: $value !important;
+  }
+  
+  .pb-#{$key} {
+    padding-bottom: $value !important;
+  }
+  
+  .pl-#{$key} {
+    padding-left: $value !important;
+  }
+  
+  .px-#{$key} {
+    padding-left: $value !important;
+    padding-right: $value !important;
+  }
+  
+  .py-#{$key} {
+    padding-top: $value !important;
+    padding-bottom: $value !important;
+  }
+}
+
+// Width utilities
+.w-25 {
+  width: 25% !important;
+}
+
+.w-50 {
+  width: 50% !important;
+}
+
+.w-75 {
+  width: 75% !important;
+}
+
+.w-100 {
+  width: 100% !important;
+}
+
+.w-auto {
+  width: auto !important;
+}
+
+// Height utilities
+.h-25 {
+  height: 25% !important;
+}
+
+.h-50 {
+  height: 50% !important;
+}
+
+.h-75 {
+  height: 75% !important;
+}
+
+.h-100 {
+  height: 100% !important;
+}
+
+.h-auto {
+  height: auto !important;
+}
+
+.vh-100 {
+  height: 100vh !important;
+}
+
+// Position utilities
+.position-static {
+  position: static !important;
+}
+
+.position-relative {
+  position: relative !important;
+}
+
+.position-absolute {
+  position: absolute !important;
+}
+
+.position-fixed {
+  position: fixed !important;
+}
+
+.position-sticky {
+  position: sticky !important;
+}
+
+// Border utilities
+.border {
+  border: $border-width solid $border-color !important;
+}
+
+.border-top {
+  border-top: $border-width solid $border-color !important;
+}
+
+.border-right {
+  border-right: $border-width solid $border-color !important;
+}
+
+.border-bottom {
+  border-bottom: $border-width solid $border-color !important;
+}
+
+.border-left {
+  border-left: $border-width solid $border-color !important;
+}
+
+.border-0 {
+  border: 0 !important;
+}
+
+.rounded {
+  border-radius: $border-radius !important;
+}
+
+.rounded-sm {
+  border-radius: $border-radius-sm !important;
+}
+
+.rounded-lg {
+  border-radius: $border-radius-lg !important;
+}
+
+.rounded-xl {
+  border-radius: $border-radius-xl !important;
+}
+
+.rounded-pill {
+  border-radius: $border-radius-pill !important;
+}
+
+.rounded-circle {
+  border-radius: $border-radius-circle !important;
+}
+
+// Shadow utilities
+.shadow-none {
+  box-shadow: $shadow-none !important;
+}
+
+.shadow-sm {
+  box-shadow: $shadow-sm !important;
+}
+
+.shadow {
+  box-shadow: $shadow !important;
+}
+
+.shadow-md {
+  box-shadow: $shadow-md !important;
+}
+
+.shadow-lg {
+  box-shadow: $shadow-lg !important;
+}
+
+.shadow-xl {
+  box-shadow: $shadow-xl !important;
+}
+
+// Overflow utilities
+.overflow-auto {
+  overflow: auto !important;
+}
+
+.overflow-hidden {
+  overflow: hidden !important;
+}
+
+.overflow-visible {
+  overflow: visible !important;
+}
+
+.overflow-scroll {
+  overflow: scroll !important;
+}
+
+// Cursor utilities
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+.cursor-not-allowed {
+  cursor: not-allowed !important;
+}
+
+// Visibility utilities
+.visible {
+  visibility: visible !important;
+}
+
+.invisible {
+  visibility: hidden !important;
+}
+
+// Opacity utilities
+.opacity-0 {
+  opacity: 0 !important;
+}
+
+.opacity-25 {
+  opacity: 0.25 !important;
+}
+
+.opacity-50 {
+  opacity: 0.5 !important;
+}
+
+.opacity-75 {
+  opacity: 0.75 !important;
+}
+
+.opacity-100 {
+  opacity: 1 !important;
+}
+
+// Container
+.container {
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: spacing(4);
+  padding-left: spacing(4);
+  
+  @each $breakpoint, $width in $container-max-widths {
+    @include respond-to($breakpoint) {
+      max-width: $width;
+    }
+  }
+}
+
+.container-fluid {
+  width: 100%;
+  padding-right: spacing(4);
+  padding-left: spacing(4);
+}
+
+// Screen reader only
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

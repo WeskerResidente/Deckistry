@@ -1,0 +1,198 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Email envoyé{% endblock %}
+
+{% block body %}
+<div class="password-reset-success">
+    <div class="success-container">
+        <div class="success-icon">
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="40" cy="40" r="38" stroke="#4CAF50" stroke-width="4"/>
+                <path d="M25 40L35 50L55 30" stroke="#4CAF50" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        
+        <h1>Email envoyé</h1>
+        
+        <p class="success-message">
+            Un lien de réinitialisation a été envoyé.
+        </p>
+        
+        <div class="success-details">
+            <p>Vérifiez votre boîte email et cliquez sur le lien pour réinitialiser votre mot de passe.</p>
+            <p class="text-muted">Le lien est valable pendant <strong>1 heure</strong>.</p>
+        </div>
+        
+        <a href="{{ path('app_login') }}" class="btn-return">
+            Retour à l'accueil
+        </a>
+        
+        <div class="help-text">
+            <p>Vous n'avez pas reçu l'email ?</p>
+            <ul>
+                <li>Vérifiez vos spams</li>
+                <li>Vérifiez que l'adresse email est correcte</li>
+                <li><a href="{{ path('app_forgot_password') }}">Renvoyer un email</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+.password-reset-success {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
+    padding: 20px;
+}
+
+.success-container {
+    background: #252525;
+    border-radius: 16px;
+    padding: 60px 40px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.success-icon {
+    margin: 0 auto 30px;
+    animation: scaleIn 0.5s ease-out;
+}
+
+@keyframes scaleIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.success-container h1 {
+    color: #ffffff;
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.success-message {
+    color: #4CAF50;
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 30px;
+}
+
+.success-details {
+    background: #1e1e1e;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.success-details p {
+    color: #b0b0b0;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.success-details p:last-child {
+    margin-bottom: 0;
+}
+
+.text-muted {
+    color: #808080 !important;
+    font-size: 14px !important;
+}
+
+.text-muted strong {
+    color: #4CAF50;
+}
+
+.btn-return {
+    display: inline-block;
+    background: linear-gradient(135deg, #5DADE2, #3498DB);
+    color: white;
+    padding: 14px 40px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    margin-bottom: 30px;
+}
+
+.btn-return:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(93, 173, 226, 0.4);
+    color: white;
+}
+
+.help-text {
+    border-top: 1px solid #3a3a3a;
+    padding-top: 25px;
+    margin-top: 20px;
+}
+
+.help-text p {
+    color: #b0b0b0;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.help-text ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.help-text ul li {
+    color: #808080;
+    font-size: 13px;
+    margin-bottom: 8px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.help-text ul li:before {
+    content: "•";
+    color: #5DADE2;
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+.help-text a {
+    color: #5DADE2;
+    text-decoration: none;
+}
+
+.help-text a:hover {
+    color: #3498DB;
+    text-decoration: underline;
+}
+
+@media (max-width: 576px) {
+    .success-container {
+        padding: 40px 25px;
+    }
+    
+    .success-container h1 {
+        font-size: 26px;
+    }
+    
+    .success-message {
+        font-size: 16px;
+    }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,351 @@
+// Profile Page Styles
+.profile-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, $bg-dark 0%, lighten($bg-dark, 5%) 100%);
+}
+
+// Profile Header
+.profile-header {
+  background: darken($bg-dark, 3%);
+  border-bottom: 1px solid lighten($bg-dark, 10%);
+  padding: map-get($spacers, 8) 0;
+  margin-bottom: map-get($spacers, 6);
+}
+
+.profile-header-content {
+  display: flex;
+  align-items: center;
+  gap: map-get($spacers, 6);
+  
+  @media (max-width: map-get($breakpoints, md)) {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.profile-avatar {
+  flex-shrink: 0;
+}
+
+.avatar-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: $border-radius-circle;
+  background: linear-gradient(135deg, $primary, lighten($primary, 10%));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-4xl;
+  font-weight: $font-weight-bold;
+  color: $text-light;
+  box-shadow: $shadow-lg;
+  overflow: hidden;
+  
+  @media (max-width: map-get($breakpoints, md)) {
+    width: 100px;
+    height: 100px;
+    font-size: $font-size-3xl;
+  }
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-name {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  color: $text-light;
+  margin-bottom: map-get($spacers, 1);
+}
+
+.profile-username {
+  font-size: $font-size-lg;
+  color: $primary;
+  margin-bottom: map-get($spacers, 1);
+}
+
+.profile-email {
+  font-size: $font-size-base;
+  color: $text-muted;
+  margin-bottom: map-get($spacers, 2);
+}
+
+.profile-joined {
+  display: flex;
+  align-items: center;
+  gap: map-get($spacers, 2);
+  font-size: $font-size-sm;
+  color: $text-muted;
+  
+  svg {
+    color: $primary;
+  }
+  
+  @media (max-width: map-get($breakpoints, md)) {
+    justify-content: center;
+  }
+}
+
+.profile-actions {
+  display: flex;
+  gap: map-get($spacers, 3);
+  
+  @media (max-width: map-get($breakpoints, md)) {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+// Stats Section
+.profile-stats {
+  padding: map-get($spacers, 6) 0;
+  margin-bottom: map-get($spacers, 6);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: map-get($spacers, 4);
+}
+
+.stat-card {
+  background: darken($bg-dark, 3%);
+  border: 1px solid lighten($bg-dark, 10%);
+  border-radius: $border-radius-xl;
+  padding: map-get($spacers, 5);
+  text-align: center;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: $shadow-lg;
+    border-color: $primary;
+  }
+}
+
+.stat-icon {
+  font-size: $font-size-4xl;
+  margin-bottom: map-get($spacers, 3);
+}
+
+.stat-value {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  color: $primary;
+  margin-bottom: map-get($spacers, 2);
+}
+
+.stat-label {
+  font-size: $font-size-sm;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+// Profile Content & Tabs
+.profile-content {
+  padding: map-get($spacers, 6) 0;
+}
+
+.profile-tabs {
+  display: flex;
+  gap: map-get($spacers, 2);
+  margin-bottom: map-get($spacers, 6);
+  border-bottom: 2px solid lighten($bg-dark, 10%);
+  overflow-x: auto;
+  
+  @media (max-width: map-get($breakpoints, md)) {
+    gap: map-get($spacers, 1);
+  }
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: map-get($spacers, 2);
+  padding: map-get($spacers, 3) map-get($spacers, 4);
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: $text-muted;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  
+  svg {
+    stroke-width: 2;
+  }
+  
+  &:hover {
+    color: $text-light;
+    background: rgba($primary, 0.1);
+  }
+  
+  &.active {
+    color: $primary;
+    border-bottom-color: $primary;
+    background: rgba($primary, 0.1);
+  }
+  
+  @media (max-width: map-get($breakpoints, md)) {
+    padding: map-get($spacers, 2) map-get($spacers, 3);
+    font-size: $font-size-sm;
+    gap: map-get($spacers, 1);
+    
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+.tab-content {
+  display: none;
+  animation: fadeIn 0.3s ease;
+  
+  &.active {
+    display: block;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Empty State
+.empty-state {
+  text-align: center;
+  padding: map-get($spacers, 10) map-get($spacers, 4);
+  background: darken($bg-dark, 3%);
+  border: 2px dashed lighten($bg-dark, 10%);
+  border-radius: $border-radius-xl;
+}
+
+.empty-icon {
+  font-size: 80px;
+  margin-bottom: map-get($spacers, 4);
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-semibold;
+  color: $text-light;
+  margin-bottom: map-get($spacers, 2);
+}
+
+.empty-state p {
+  font-size: $font-size-base;
+  color: $text-muted;
+  margin-bottom: map-get($spacers, 4);
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+// Badges Section
+.profile-badges {
+  padding: map-get($spacers, 8) 0;
+  background: darken($bg-dark, 3%);
+  border-top: 1px solid lighten($bg-dark, 10%);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: map-get($spacers, 3);
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $text-light;
+  margin-bottom: map-get($spacers, 6);
+  
+  svg {
+    color: $primary;
+    stroke-width: 2;
+  }
+}
+
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: map-get($spacers, 4);
+}
+
+.badge-item {
+  background: lighten($bg-dark, 5%);
+  border: 2px solid lighten($bg-dark, 10%);
+  border-radius: $border-radius-lg;
+  padding: map-get($spacers, 5);
+  text-align: center;
+  transition: all 0.3s ease;
+  
+  &.locked {
+    opacity: 0.5;
+    
+    .badge-icon {
+      filter: grayscale(100%);
+    }
+  }
+  
+  &:not(.locked) {
+    border-color: $primary;
+    box-shadow: 0 0 20px rgba($primary, 0.3);
+    
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 30px rgba($primary, 0.5);
+    }
+  }
+}
+
+.badge-icon {
+  font-size: 60px;
+  margin-bottom: map-get($spacers, 3);
+}
+
+.badge-name {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $text-light;
+  margin-bottom: map-get($spacers, 2);
+}
+
+.badge-description {
+  font-size: $font-size-sm;
+  color: $text-muted;
+}
+
+// Responsive adjustments
+@media (max-width: map-get($breakpoints, md)) {
+  .profile-header {
+    padding: map-get($spacers, 6) 0;
+  }
+  
+  .profile-name {
+    font-size: $font-size-2xl;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .badges-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,211 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil - Deckistry{% endblock %}
+
+{% block body %}
+<div class="profile-page">
+    {# Profile Header #}
+    <section class="profile-header">
+        <div class="container">
+            <div class="profile-header-content">
+                <div class="profile-avatar">
+                    <div class="avatar-circle">
+                        {% if user.avatar %}
+                            <img src="{{ asset('uploads/avatars/' ~ user.avatar) }}" alt="{{ user.username }}" class="avatar-image">
+                        {% else %}
+                            {{ user.username|slice(0, 2)|upper }}
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="profile-info">
+                    <h1 class="profile-name">{{ user.prenom }} {{ user.nom }}</h1>
+                    <p class="profile-username">@{{ user.username }}</p>
+                    <p class="profile-email">{{ user.email }}</p>
+                    <p class="profile-joined">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                        Membre depuis {{ user.createdAt ? user.createdAt|date('F Y') : 'le début' }}
+                    </p>
+                </div>
+                
+                <div class="profile-actions">
+                    <a href="{{ path('app_settings') }}" class="btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M12 1v6m0 6v6M5.6 5.6l4.2 4.2m4.2 4.2l4.2 4.2M1 12h6m6 0h6M5.6 18.4l4.2-4.2m4.2-4.2l4.2-4.2"/>
+                        </svg>
+                        Modifier le profil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# Stats Section #}
+    <section class="profile-stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🃏</div>
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Decks créés</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Cartes en collection</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Decks favoris</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">💬</div>
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Commentaires</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# Activity Tabs #}
+    <section class="profile-content">
+        <div class="container">
+            <div class="profile-tabs">
+                <button class="tab-btn active" data-tab="decks">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                    </svg>
+                    Mes Decks
+                </button>
+                <button class="tab-btn" data-tab="collection">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <rect x="3" y="3" width="7" height="7"/>
+                        <rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/>
+                        <rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    Ma Collection
+                </button>
+                <button class="tab-btn" data-tab="favorites">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                    Favoris
+                </button>
+                <button class="tab-btn" data-tab="activity">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                    Activité
+                </button>
+            </div>
+
+            {# Tab Content - Decks #}
+            <div class="tab-content active" id="decks-content">
+                <div class="empty-state">
+                    <div class="empty-icon">🃏</div>
+                    <h3>Aucun deck pour le moment</h3>
+                    <p>Créez votre premier deck pour commencer à construire votre stratégie !</p>
+                    <a href="{{ path('app_deck_builder') }}" class="btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        Créer un deck
+                    </a>
+                </div>
+            </div>
+
+            {# Tab Content - Collection #}
+            <div class="tab-content" id="collection-content">
+                <div class="empty-state">
+                    <div class="empty-icon">📦</div>
+                    <h3>Votre collection est vide</h3>
+                    <p>Commencez à ajouter des cartes à votre collection personnelle.</p>
+                    <a href="{{ path('app_search') }}" class="btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        Rechercher des cartes
+                    </a>
+                </div>
+            </div>
+
+            {# Tab Content - Favorites #}
+            <div class="tab-content" id="favorites-content">
+                <div class="empty-state">
+                    <div class="empty-icon">⭐</div>
+                    <h3>Aucun deck favori</h3>
+                    <p>Explorez et ajoutez des decks à vos favoris pour les retrouver facilement.</p>
+                    <a href="{{ path('app_decks') }}" class="btn btn-primary">
+                        Explorer les decks
+                    </a>
+                </div>
+            </div>
+
+            {# Tab Content - Activity #}
+            <div class="tab-content" id="activity-content">
+                <div class="empty-state">
+                    <div class="empty-icon">📊</div>
+                    <h3>Aucune activité récente</h3>
+                    <p>Votre activité apparaîtra ici : decks créés, cartes ajoutées, commentaires...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# Badges Section (Future feature) #}
+    <section class="profile-badges">
+        <div class="container">
+            <h2 class="section-title">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                Badges & Réalisations
+            </h2>
+            <div class="badges-grid">
+                <div class="badge-item locked">
+                    <div class="badge-icon">🎯</div>
+                    <div class="badge-name">Premier Deck</div>
+                    <div class="badge-description">Créer votre premier deck</div>
+                </div>
+                
+                <div class="badge-item locked">
+                    <div class="badge-icon">📚</div>
+                    <div class="badge-name">Collectionneur</div>
+                    <div class="badge-description">Ajouter 100 cartes à votre collection</div>
+                </div>
+                
+                <div class="badge-item locked">
+                    <div class="badge-icon">💎</div>
+                    <div class="badge-name">Deck Compétitif</div>
+                    <div class="badge-description">Créer un deck de 60 cartes optimisé</div>
+                </div>
+                
+                <div class="badge-item locked">
+                    <div class="badge-icon">🌟</div>
+                    <div class="badge-name">Populaire</div>
+                    <div class="badge-description">Recevoir 50 favoris sur vos decks</div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ importmap('profile') }}
+{% endblock %}

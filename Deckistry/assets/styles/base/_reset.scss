@@ -1,0 +1,109 @@
+// =============================================================================
+// RESET / NORMALIZE
+// =============================================================================
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  font-family: $font-primary;
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  line-height: $line-height-normal;
+  color: $text-primary;
+  background-color: $bg-light;
+  overflow-x: hidden;
+}
+
+// Remove list styles
+ul,
+ol {
+  list-style: none;
+}
+
+// Remove link styles
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: $transition-base;
+}
+
+// Image defaults
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+// Form elements
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+// Remove button focus outline for mouse users
+button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+// Table defaults
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+// Prevent overflow
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+// Accessibility
+:focus-visible {
+  outline: 2px solid $accent;
+  outline-offset: 2px;
+}
+
+// Smooth scrolling
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+// Selection color
+::selection {
+  background-color: $accent;
+  color: $white;
+}

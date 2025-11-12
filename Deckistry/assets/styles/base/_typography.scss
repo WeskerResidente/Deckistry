@@ -1,0 +1,273 @@
+// =============================================================================
+// TYPOGRAPHY
+// =============================================================================
+
+// Headings
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-top: 0;
+  margin-bottom: spacing(4);
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+  color: $text-primary;
+}
+
+h1 {
+  font-size: $font-size-5xl;
+  
+  @include respond-below(md) {
+    font-size: $font-size-4xl;
+  }
+}
+
+h2 {
+  font-size: $font-size-4xl;
+  
+  @include respond-below(md) {
+    font-size: $font-size-3xl;
+  }
+}
+
+h3 {
+  font-size: $font-size-3xl;
+  
+  @include respond-below(md) {
+    font-size: $font-size-2xl;
+  }
+}
+
+h4 {
+  font-size: $font-size-2xl;
+}
+
+h5 {
+  font-size: $font-size-xl;
+}
+
+h6 {
+  font-size: $font-size-lg;
+}
+
+// Paragraphs
+p {
+  margin-top: 0;
+  margin-bottom: spacing(4);
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Links
+a {
+  color: $accent;
+  transition: color $transition-fast;
+  
+  &:hover {
+    color: darken($accent, 10%);
+    text-decoration: underline;
+  }
+  
+  &:active {
+    color: darken($accent, 15%);
+  }
+}
+
+// Text utilities
+.text-primary {
+  color: $text-primary !important;
+}
+
+.text-secondary {
+  color: $text-secondary !important;
+}
+
+.text-light {
+  color: $text-light !important;
+}
+
+.text-muted {
+  color: $text-muted !important;
+}
+
+.text-success {
+  color: $success !important;
+}
+
+.text-danger {
+  color: $danger !important;
+}
+
+.text-warning {
+  color: $warning !important;
+}
+
+.text-info {
+  color: $info !important;
+}
+
+// Font weights
+.font-light {
+  font-weight: $font-weight-light !important;
+}
+
+.font-normal {
+  font-weight: $font-weight-normal !important;
+}
+
+.font-medium {
+  font-weight: $font-weight-medium !important;
+}
+
+.font-semibold {
+  font-weight: $font-weight-semibold !important;
+}
+
+.font-bold {
+  font-weight: $font-weight-bold !important;
+}
+
+// Font sizes
+.text-xs {
+  font-size: $font-size-xs !important;
+}
+
+.text-sm {
+  font-size: $font-size-sm !important;
+}
+
+.text-base {
+  font-size: $font-size-base !important;
+}
+
+.text-lg {
+  font-size: $font-size-lg !important;
+}
+
+.text-xl {
+  font-size: $font-size-xl !important;
+}
+
+.text-2xl {
+  font-size: $font-size-2xl !important;
+}
+
+.text-3xl {
+  font-size: $font-size-3xl !important;
+}
+
+// Text alignment
+.text-left {
+  text-align: left !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.text-right {
+  text-align: right !important;
+}
+
+.text-justify {
+  text-align: justify !important;
+}
+
+// Text transform
+.text-uppercase {
+  text-transform: uppercase !important;
+}
+
+.text-lowercase {
+  text-transform: lowercase !important;
+}
+
+.text-capitalize {
+  text-transform: capitalize !important;
+}
+
+// Text decoration
+.text-underline {
+  text-decoration: underline !important;
+}
+
+.text-no-underline {
+  text-decoration: none !important;
+}
+
+// Line clamp utilities
+.line-clamp-1 {
+  @include line-clamp(1);
+}
+
+.line-clamp-2 {
+  @include line-clamp(2);
+}
+
+.line-clamp-3 {
+  @include line-clamp(3);
+}
+
+.truncate {
+  @include truncate;
+}
+
+// Lists
+ul,
+ol {
+  &.styled-list {
+    list-style: initial;
+    padding-left: spacing(5);
+    margin-bottom: spacing(4);
+    
+    li {
+      margin-bottom: spacing(2);
+    }
+  }
+}
+
+// Blockquotes
+blockquote {
+  margin: spacing(6) 0;
+  padding: spacing(4) spacing(5);
+  border-left: 4px solid $accent;
+  background-color: $gray-100;
+  font-style: italic;
+  color: $text-secondary;
+}
+
+// Code
+code {
+  padding: 0.125rem 0.25rem;
+  font-family: $font-mono;
+  font-size: 0.875em;
+  background-color: $gray-200;
+  border-radius: $border-radius-sm;
+  color: $danger;
+}
+
+pre {
+  padding: spacing(4);
+  margin: spacing(4) 0;
+  background-color: $gray-900;
+  color: $gray-100;
+  border-radius: $border-radius;
+  overflow-x: auto;
+  
+  code {
+    padding: 0;
+    background: none;
+    color: inherit;
+  }
+}
+
+// Horizontal rule
+hr {
+  margin: spacing(6) 0;
+  border: 0;
+  border-top: $border-width solid $border-color;
+}

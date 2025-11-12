@@ -1,0 +1,134 @@
+// =============================================================================
+// SASS FUNCTIONS
+// =============================================================================
+
+// Get spacing value from map
+@function spacing($key) {
+  @if map-has-key($spacers, $key) {
+    @return map-get($spacers, $key);
+  }
+  @warn "Unknown spacing key: #{$key}.";
+  @return null;
+}
+
+// Usage: margin: spacing(4);
+
+// =============================================================================
+// COLOR FUNCTIONS
+// =============================================================================
+
+// Lighten a color
+@function tint($color, $percentage) {
+  @return mix(white, $color, $percentage);
+}
+
+// Darken a color
+@function shade($color, $percentage) {
+  @return mix(black, $color, $percentage);
+}
+
+// Get contrast color (black or white) based on background
+@function contrast-color($background-color, $light: $white, $dark: $black) {
+  $r: red($background-color);
+  $g: green($background-color);
+  $b: blue($background-color);
+  
+  $yiq: (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+  
+  @if ($yiq >= 128) {
+    @return $dark;
+  } @else {
+    @return $light;
+  }
+}
+
+// =============================================================================
+// UNIT CONVERSION
+// =============================================================================
+
+// Remove units from a value
+@function strip-unit($value) {
+  @return $value / ($value * 0 + 1);
+}
+
+// Convert px to rem
+@function rem($pixels, $context: 16) {
+  @if (unitless($pixels)) {
+    $pixels: $pixels * 1px;
+  }
+  @if (unitless($context)) {
+    $context: $context * 1px;
+  }
+  @return $pixels / $context * 1rem;
+}
+
+// Convert px to em
+@function em($pixels, $context: 16) {
+  @if (unitless($pixels)) {
+    $pixels: $pixels * 1px;
+  }
+  @if (unitless($context)) {
+    $context: $context * 1px;
+  }
+  @return $pixels / $context * 1em;
+}
+
+// =============================================================================
+// MATH FUNCTIONS
+// =============================================================================
+
+// Calculate power
+@function pow($number, $exponent) {
+  $result: 1;
+  @if $exponent > 0 {
+    @for $i from 1 through $exponent {
+      $result: $result * $number;
+    }
+  } @else if $exponent < 0 {
+    @for $i from $exponent through -1 {
+      $result: $result / $number;
+    }
+  }
+  @return $result;
+}
+
+// Clamp a value between min and max
+@function clamp-value($value, $min, $max) {
+  @return max($min, min($max, $value));
+}
+
+// =============================================================================
+// STRING FUNCTIONS
+// =============================================================================
+
+// Replace substring in a string
+@function str-replace($string, $search, $replace: '') {
+  $index: str-index($string, $search);
+  @if $index {
+    @return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+  }
+  @return $string;
+}
+
+// =============================================================================
+// MAP FUNCTIONS
+// =============================================================================
+
+// Deep get value from nested map
+@function map-deep-get($map, $keys...) {
+  @each $key in $keys {
+    $map: map-get($map, $key);
+  }
+  @return $map;
+}
+
+// Check if map has nested key
+@function map-deep-has-key($map, $keys...) {
+  @each $key in $keys {
+    @if not map-has-key($map, $key) {
+      @return false;
+    }
+    $map: map-get($map, $key);
+  }
+  @return true;
+}

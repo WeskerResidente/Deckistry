@@ -1,0 +1,295 @@
+// =============================================================================
+// BADGES
+// =============================================================================
+
+.badge {
+  display: inline-block;
+  padding: spacing(1) spacing(2);
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+  color: $white;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: $border-radius-sm;
+  transition: $transition-base;
+  
+  &:empty {
+    display: none;
+  }
+}
+
+// Badge variants
+.badge-primary {
+  background-color: $primary;
+}
+
+.badge-secondary {
+  background-color: $secondary;
+}
+
+.badge-success {
+  background-color: $success;
+}
+
+.badge-danger {
+  background-color: $danger;
+}
+
+.badge-warning {
+  background-color: $warning;
+  color: $text-primary;
+}
+
+.badge-info {
+  background-color: $info;
+}
+
+.badge-light {
+  background-color: $gray-200;
+  color: $text-primary;
+}
+
+.badge-dark {
+  background-color: $gray-800;
+}
+
+// Pill badges
+.badge-pill {
+  padding-right: spacing(3);
+  padding-left: spacing(3);
+  border-radius: $border-radius-pill;
+}
+
+// Badge sizes
+.badge-sm {
+  padding: spacing(0.5) spacing(1.5);
+  font-size: $font-size-xs;
+}
+
+.badge-lg {
+  padding: spacing(2) spacing(3);
+  font-size: $font-size-sm;
+}
+
+// =============================================================================
+// MAGIC THE GATHERING SPECIFIC BADGES
+// =============================================================================
+
+// Mana cost badges
+.badge-mana {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  margin: 0 spacing(0.5);
+}
+
+.badge-mana-white {
+  background-color: $mtg-white;
+  color: $text-primary;
+  border-color: darken($mtg-white, 10%);
+}
+
+.badge-mana-blue {
+  background-color: $mtg-blue;
+  color: $white;
+}
+
+.badge-mana-black {
+  background-color: $mtg-black;
+  color: $white;
+}
+
+.badge-mana-red {
+  background-color: $mtg-red;
+  color: $white;
+}
+
+.badge-mana-green {
+  background-color: $mtg-green;
+  color: $white;
+}
+
+.badge-mana-colorless {
+  background-color: $gray-400;
+  color: $white;
+}
+
+.badge-mana-generic {
+  background-color: $gray-300;
+  color: $text-primary;
+  border-color: $gray-500;
+}
+
+// Rarity badges
+.badge-rarity {
+  font-weight: $font-weight-bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: spacing(1) spacing(3);
+}
+
+.badge-common {
+  background-color: $rarity-common;
+  color: $white;
+}
+
+.badge-uncommon {
+  background-color: $rarity-uncommon;
+  color: $white;
+}
+
+.badge-rare {
+  background-color: $rarity-rare;
+  color: $white;
+}
+
+.badge-mythic {
+  background-color: $rarity-mythic;
+  color: $white;
+}
+
+// Card type badges
+.badge-creature {
+  background-color: $mtg-green;
+  color: $white;
+}
+
+.badge-instant {
+  background-color: $mtg-blue;
+  color: $white;
+}
+
+.badge-sorcery {
+  background-color: $mtg-red;
+  color: $white;
+}
+
+.badge-enchantment {
+  background-color: lighten($mtg-white, 5%);
+  color: $text-primary;
+  border: 1px solid $mtg-white;
+}
+
+.badge-artifact {
+  background-color: $gray-500;
+  color: $white;
+}
+
+.badge-planeswalker {
+  background: linear-gradient(135deg, $mtg-blue, $accent);
+  color: $white;
+}
+
+.badge-land {
+  background-color: $mtg-green;
+  color: $white;
+}
+
+// Set symbols as badges
+.badge-set {
+  display: inline-flex;
+  align-items: center;
+  gap: spacing(1);
+  padding: spacing(1) spacing(2);
+  background-color: $gray-100;
+  color: $text-primary;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  
+  .set-icon {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+// Quantity badges (for card collections)
+.badge-quantity {
+  position: absolute;
+  top: spacing(2);
+  right: spacing(2);
+  min-width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: spacing(1) spacing(2);
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  background-color: $accent;
+  color: $white;
+  border-radius: $border-radius-pill;
+  box-shadow: $shadow-md;
+  z-index: 1;
+}
+
+// Notification badges
+.badge-notification {
+  position: absolute;
+  top: -spacing(1);
+  right: -spacing(1);
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 spacing(1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  color: $white;
+  background-color: $danger;
+  border-radius: $border-radius-pill;
+  border: 2px solid $white;
+}
+
+// Status badges
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: spacing(1);
+  padding: spacing(1) spacing(3);
+  
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background-color: currentColor;
+  }
+}
+
+.badge-online {
+  background-color: lighten($success, 45%);
+  color: $success;
+  
+  &::before {
+    background-color: $success;
+  }
+}
+
+.badge-offline {
+  background-color: lighten($gray-500, 40%);
+  color: $gray-700;
+  
+  &::before {
+    background-color: $gray-500;
+  }
+}
+
+.badge-busy {
+  background-color: lighten($warning, 40%);
+  color: darken($warning, 20%);
+  
+  &::before {
+    background-color: $warning;
+  }
+}

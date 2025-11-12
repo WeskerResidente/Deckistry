@@ -1,0 +1,175 @@
+// =============================================================================
+// BUTTONS
+// =============================================================================
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: spacing(3) spacing(5);
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  line-height: 1;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  border: 2px solid transparent;
+  border-radius: $border-radius;
+  cursor: pointer;
+  transition: $transition-base;
+  user-select: none;
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 2px;
+  }
+}
+
+// Button sizes
+.btn-sm {
+  padding: spacing(2) spacing(3);
+  font-size: $font-size-sm;
+}
+
+.btn-lg {
+  padding: spacing(4) spacing(6);
+  font-size: $font-size-lg;
+}
+
+// Button variants
+.btn-primary {
+  @include button-variant($accent);
+}
+
+.btn-secondary {
+  @include button-variant($secondary);
+}
+
+.btn-success {
+  @include button-variant($success);
+}
+
+.btn-danger {
+  @include button-variant($danger);
+}
+
+.btn-warning {
+  @include button-variant($warning, $gray-900);
+}
+
+.btn-info {
+  @include button-variant($info);
+}
+
+.btn-light {
+  @include button-variant($gray-200, $gray-900);
+}
+
+.btn-dark {
+  @include button-variant($gray-900);
+}
+
+// Outline buttons
+.btn-outline-primary {
+  @include button-outline($accent);
+}
+
+.btn-outline-secondary {
+  @include button-outline($secondary);
+}
+
+.btn-outline-dark {
+  @include button-outline($gray-900);
+}
+
+// Block button
+.btn-block {
+  display: flex;
+  width: 100%;
+}
+
+// Button group
+.btn-group {
+  display: inline-flex;
+  
+  .btn {
+    border-radius: 0;
+    
+    &:first-child {
+      border-top-left-radius: $border-radius;
+      border-bottom-left-radius: $border-radius;
+    }
+    
+    &:last-child {
+      border-top-right-radius: $border-radius;
+      border-bottom-right-radius: $border-radius;
+    }
+    
+    &:not(:last-child) {
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+// Icon button
+.btn-icon {
+  @include square(2.5rem);
+  padding: 0;
+  
+  &.btn-sm {
+    @include square(2rem);
+  }
+  
+  &.btn-lg {
+    @include square(3rem);
+  }
+}
+
+// Magic-themed buttons
+.btn-mana {
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+  
+  &:hover::before {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+.btn-white {
+  @include button-variant($mtg-white, $black);
+}
+
+.btn-blue {
+  @include button-variant($mtg-blue);
+}
+
+.btn-black {
+  @include button-variant($mtg-black);
+}
+
+.btn-red {
+  @include button-variant($mtg-red);
+}
+
+.btn-green {
+  @include button-variant($mtg-green);
+}

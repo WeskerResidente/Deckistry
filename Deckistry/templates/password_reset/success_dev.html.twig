@@ -1,0 +1,270 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Email envoyé (Mode Développement){% endblock %}
+
+{% block body %}
+<div class="password-reset-success">
+    <div class="success-container">
+        <div class="success-icon">
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="40" cy="40" r="38" stroke="#4CAF50" stroke-width="4"/>
+                <path d="M25 40L35 50L55 30" stroke="#4CAF50" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        
+        <h1>Email envoyé</h1>
+        
+        <p class="success-message">
+            Un lien de réinitialisation a été envoyé.
+        </p>
+        
+        <div class="dev-mode-notice">
+            <div class="dev-badge">MODE DÉVELOPPEMENT</div>
+            <p>L'email n'est pas réellement envoyé (MAILER_DSN=null://null)</p>
+        </div>
+        
+        <div class="success-details">
+            <h3>📧 Où trouver le lien ?</h3>
+            
+            <div class="method-box">
+                <h4>Méthode 1 : Symfony Profiler</h4>
+                <ol>
+                    <li>Regardez en <strong>bas de cette page</strong></li>
+                    <li>Cliquez sur l'icône <strong>📧 (Email)</strong> dans la barre noire</li>
+                    <li>Vous verrez le contenu complet de l'email</li>
+                    <li>Copiez le lien de réinitialisation</li>
+                </ol>
+            </div>
+            
+            <div class="method-box">
+                <h4>Méthode 2 : Route de Debug</h4>
+                <p>Accédez directement à cette URL :</p>
+                <div class="code-box">
+                    <code>http://127.0.0.1:8000/debug/reset-link/{{ email|default('votre@email.com') }}</code>
+                </div>
+                <p class="text-muted">Remplacez par votre email</p>
+            </div>
+        </div>
+        
+        <a href="{{ path('app_login') }}" class="btn-return">
+            Retour à l'accueil
+        </a>
+        
+        <div class="help-text">
+            <p><strong>💡 Astuce :</strong> Pour envoyer de vrais emails, configurez Mailtrap ou un serveur SMTP dans le fichier <code>.env</code></p>
+        </div>
+    </div>
+</div>
+
+<style>
+.password-reset-success {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
+    padding: 20px;
+}
+
+.success-container {
+    background: #252525;
+    border-radius: 16px;
+    padding: 60px 40px;
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.success-icon {
+    margin: 0 auto 30px;
+    animation: scaleIn 0.5s ease-out;
+}
+
+@keyframes scaleIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.success-container h1 {
+    color: #ffffff;
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.success-message {
+    color: #4CAF50;
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+.dev-mode-notice {
+    background: linear-gradient(135deg, #FF9800, #F57C00);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.dev-badge {
+    background: rgba(0, 0, 0, 0.3);
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+.dev-mode-notice p {
+    color: white;
+    font-size: 14px;
+    margin: 0;
+}
+
+.success-details {
+    background: #1e1e1e;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 30px;
+    text-align: left;
+}
+
+.success-details h3 {
+    color: #5DADE2;
+    font-size: 18px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.method-box {
+    background: #252525;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+}
+
+.method-box:last-child {
+    margin-bottom: 0;
+}
+
+.method-box h4 {
+    color: #4CAF50;
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.method-box ol {
+    color: #b0b0b0;
+    font-size: 14px;
+    padding-left: 20px;
+    margin: 0;
+}
+
+.method-box ol li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.method-box ol li strong {
+    color: #5DADE2;
+}
+
+.method-box p {
+    color: #b0b0b0;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.code-box {
+    background: #1a1a1a;
+    border: 1px solid #3a3a3a;
+    border-radius: 6px;
+    padding: 12px;
+    margin: 10px 0;
+    word-break: break-all;
+}
+
+.code-box code {
+    color: #5DADE2;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+}
+
+.text-muted {
+    color: #808080 !important;
+    font-size: 12px !important;
+    margin-top: 5px;
+}
+
+.btn-return {
+    display: inline-block;
+    background: linear-gradient(135deg, #5DADE2, #3498DB);
+    color: white;
+    padding: 14px 40px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    margin-bottom: 30px;
+}
+
+.btn-return:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(93, 173, 226, 0.4);
+    color: white;
+}
+
+.help-text {
+    border-top: 1px solid #3a3a3a;
+    padding-top: 25px;
+    margin-top: 20px;
+}
+
+.help-text p {
+    color: #b0b0b0;
+    font-size: 13px;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.help-text code {
+    background: #1e1e1e;
+    color: #FF9800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+@media (max-width: 576px) {
+    .success-container {
+        padding: 40px 25px;
+    }
+    
+    .success-container h1 {
+        font-size: 26px;
+    }
+    
+    .success-message {
+        font-size: 16px;
+    }
+    
+    .method-box {
+        padding: 15px;
+    }
+}
+</style>
+{% endblock %}

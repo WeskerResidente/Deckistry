@@ -1,0 +1,84 @@
+#!/usr/bin/env php
+<?php
+
+use App\Service\ScryfallService;
+use Symfony\Component\Dotenv\Dotenv;
+
+require dirname(__DIR__).'/vendor/autoload.php';
+
+(new Dotenv())->bootEnv(dirname(__DIR__).'/.env');
+
+$kernel = new \App\Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
+$kernel->boot();
+$container = $kernel->getContainer();
+
+/** @var ScryfallService $scryfallService */
+$scryfallService = $container->get(ScryfallService::class);
+
+echo "🃏 Testing Scryfall API Integration\n";
+echo "====================================\n\n";
+
+// Test 1: Get a card by ID
+echo "1️⃣  Testing getCardById()...\n";
+try {
+    $card = $scryfallService->getCardById('f0e42b92-6708-4e3c-b765-8cbb1d6d59da');
+    echo "   ✅ Success! Found: {$card->name}\n";
+    echo "   Type: {$card->typeLine}\n";
+    echo "   Mana Cost: {$card->manaCost}\n";
+    echo "   Set: {$card->setName} ({$card->setCode})\n\n";
+} catch (\Exception $e) {
+    echo "   ❌ Error: {$e->getMessage()}\n\n";
+}
+
+// Test 2: Search for cards
+echo "2️⃣  Testing searchCards()...\n";
+try {
+    $result = $scryfallService->searchCards('lightning bolt');
+    echo "   ✅ Success! Found {$result['total_cards']} cards\n";
+    echo "   Showing first 3:\n";
+    foreach (array_slice($result['data'], 0, 3) as $card) {
+        echo "   - {$card->name} ({$card->setCode})\n";
+    }
+    echo "\n";
+} catch (\Exception $e) {
+    echo "   ❌ Error: {$e->getMessage()}\n\n";
+}
+
+// Test 3: Autocomplete
+echo "3️⃣  Testing autocomplete()...\n";
+try {
+    $suggestions = $scryfallService->autocomplete('light');
+    echo "   ✅ Success! Found " . count($suggestions) . " suggestions\n";
+    echo "   First 5: " . implode(', ', array_slice($suggestions, 0, 5)) . "\n\n";
+} catch (\Exception $e) {
+    echo "   ❌ Error: {$e->getMessage()}\n\n";
+}
+
+// Test 4: Get card by name
+echo "4️⃣  Testing getCardByName()...\n";
+try {
+    $card = $scryfallService->getCardByName('Black Lotus');
+    echo "   ✅ Success! Found: {$card->name}\n";
+    echo "   Set: {$card->setName}\n";
+    if ($card->usdPrice) {
+        echo "   Price: \${$card->usdPrice}\n";
+    }
+    echo "\n";
+} catch (\Exception $e) {
+    echo "   ❌ Error: {$e->getMessage()}\n\n";
+}
+
+// Test 5: Random card
+echo "5️⃣  Testing getRandomCard()...\n";
+try {
+    $card = $scryfallService->getRandomCard();
+    echo "   ✅ Success! Random card: {$card->name}\n";
+    echo "   Type: {$card->typeLine}\n\n";
+} catch (\Exception $e) {
+    echo "   ❌ Error: {$e->getMessage()}\n\n";
+}
+
+echo "====================================\n";
+echo "✅ All tests completed!\n";
+echo "\nYou can now use ScryfallService in your controllers.\n";
+echo "Check SCRYFALL_GUIDE.md for usage examples.\n";

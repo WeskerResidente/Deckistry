@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}Deckistry - Magic: The Gathering Deck Builder{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🃏</text></svg>">
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+        {% endblock %}
+
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+            {% block importmap %}
+                {{ importmap('app') }}
+                {{ importmap('navigation') }}
+            {% endblock %}
+        {% endblock %}
+    </head>
+    <body>
+        <!-- Skip to content link for accessibility -->
+        <a href="#main-content" class="skip-to-content">Skip to main content</a>
+        
+        <!-- Header -->
+        <header class="site-header">
+            <div class="header-container">
+                <a href="{{ path('app_home') }}" class="header-brand">
+                    <span class="brand-logo">🃏</span>
+                    <span class="brand-text">Deckistry</span>
+                </a>
+                
+                <nav class="header-nav" id="headerNav">
+                    <a href="{{ path('app_home') }}" class="header-nav-link">
+                        <span class="nav-icon">🏠</span>
+                        Home
+                    </a>
+                    <a href="{{ path('app_search') }}" class="header-nav-link">
+                        <span class="nav-icon">🔍</span>
+                        Search Cards
+                    </a>
+                    <a href="{{ path('app_decks') }}" class="header-nav-link">
+                        <span class="nav-icon">📚</span>
+                        Decks
+                    </a>
+                    {% if app.user %}
+                    <a href="{{ path('app_deck_builder') }}" class="header-nav-link">
+                        <span class="nav-icon">✨</span>
+                        Deck Builder
+                    </a>
+                    <a href="{{ path('app_collection') }}" class="header-nav-link">
+                        <span class="nav-icon">💎</span>
+                        My Collection
+                    </a>
+                    {% endif %}
+                </nav>
+                
+                <div class="header-actions">
+                    {% if app.user %}
+                    <div class="header-user">
+                        <button class="user-button" id="userMenuToggle">
+                            <span class="user-avatar">
+                                {% if app.user.avatar %}
+                                    <img src="{{ asset('uploads/avatars/' ~ app.user.avatar) }}" alt="{{ app.user.username }}" class="user-avatar-image">
+                                {% else %}
+                                    {{ app.user.username|slice(0, 2)|upper }}
+                                {% endif %}
+                            </span>
+                            <span class="user-name">{{ app.user.username }}</span>
+                        </button>
+                        <div class="dropdown-menu" id="userMenu">
+                            <a href="{{ path('app_profile') }}" class="dropdown-item">Profile</a>
+                            <a href="{{ path('app_my_decks') }}" class="dropdown-item">My Decks</a>
+                            <a href="{{ path('app_settings') }}" class="dropdown-item">Settings</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="{{ path('app_logout') }}" class="dropdown-item">Logout</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <a href="{{ path('app_login') }}" class="btn btn-secondary">Login</a>
+                    <a href="{{ path('app_register') }}" class="btn btn-accent">Sign Up</a>
+                    {% endif %}
+                    
+                    <button class="header-mobile-toggle" id="mobileToggle">
+                        ☰
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main id="main-content" class="main-content with-header">
+            {% block body %}{% endblock %}
+        </main>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="footer-container">
+                <div class="footer-content">
+                    <div class="footer-section footer-brand">
+                        <div class="brand-logo">
+                            <span>🃏</span>
+                            <span>Deckistry</span>
+                        </div>
+                        <p class="brand-description">
+                            The ultimate deck building tool for Magic: The Gathering players.
+                            Build, manage, and share your decks with ease.
+                        </p>
+                        <div class="footer-social">
+                            <a href="#" aria-label="Twitter">𝕏</a>
+                            <a href="#" aria-label="Discord">💬</a>
+                            <a href="#" aria-label="GitHub">🐙</a>
+                        </div>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h3>Product</h3>
+                        <ul class="footer-links">
+                            <li><a href="{{ path('app_deck_builder') }}">Deck Builder</a></li>
+                            <li><a href="{{ path('app_search') }}">Card Search</a></li>
+                            <li><a href="{{ path('app_collection') }}">Collection Manager</a></li>
+                            <li><a href="{{ path('app_decks') }}">Browse Decks</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h3>Community</h3>
+                        <ul class="footer-links">
+                            <li><a href="#">Discord Server</a></li>
+                            <li><a href="#">Forum</a></li>
+                            <li><a href="#">Featured Decks</a></li>
+                            <li><a href="#">Top Builders</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h3>Support</h3>
+                        <ul class="footer-links">
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">Contact Us</a></li>
+                            <li><a href="#">Report a Bug</a></li>
+                            <li><a href="#">API Documentation</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="footer-disclaimer">
+                    <p>
+                        Deckistry is not affiliated with, endorsed, sponsored, or specifically approved by Wizards of the Coast LLC.
+                        Magic: The Gathering and its respective properties are copyright Wizards of the Coast.
+                        Card data provided by <a href="https://scryfall.com" target="_blank">Scryfall</a>.
+                    </p>
+                </div>
+                
+                <div class="footer-bottom">
+                    <div class="footer-copyright">
+                        © {{ 'now'|date('Y') }} Deckistry. All rights reserved.
+                    </div>
+                    <ul class="footer-legal">
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+    </body>
+</html>

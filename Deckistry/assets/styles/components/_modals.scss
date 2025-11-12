@@ -1,0 +1,395 @@
+// =============================================================================
+// MODAL
+// =============================================================================
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: $zindex-modal;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  outline: 0;
+  display: none;
+  
+  &.show {
+    display: block;
+  }
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: $zindex-modal-backdrop;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba($black, 0.75);
+  animation: fadeIn $transition-base;
+}
+
+.modal-dialog {
+  position: relative;
+  width: auto;
+  margin: spacing(6) auto;
+  pointer-events: none;
+  max-width: 600px;
+  
+  @include respond-below(md) {
+    margin: spacing(3) spacing(4);
+  }
+}
+
+.modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  pointer-events: auto;
+  background-color: $white;
+  background-clip: padding-box;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-xl;
+  outline: 0;
+  animation: slideDown 0.3s ease-out;
+}
+
+.modal-header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  padding: spacing(5);
+  border-bottom: 1px solid $border-color;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+  color: $text-primary;
+}
+
+.modal-close {
+  padding: spacing(2);
+  margin: -#{spacing(2)} -#{spacing(2)} -#{spacing(2)} auto;
+  background: none;
+  border: none;
+  font-size: $font-size-2xl;
+  line-height: 1;
+  color: $text-muted;
+  cursor: pointer;
+  transition: $transition-base;
+  
+  &:hover {
+    color: $text-primary;
+  }
+}
+
+.modal-body {
+  position: relative;
+  flex: 1 1 auto;
+  padding: spacing(5);
+  max-height: calc(100vh - 300px);
+  overflow-y: auto;
+  @include custom-scrollbar;
+}
+
+.modal-footer {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  padding: spacing(4) spacing(5);
+  border-top: 1px solid $border-color;
+  gap: spacing(3);
+}
+
+// Modal sizes
+.modal-sm {
+  max-width: 400px;
+}
+
+.modal-lg {
+  max-width: 900px;
+}
+
+.modal-xl {
+  max-width: 1200px;
+}
+
+.modal-fullscreen {
+  max-width: 100%;
+  margin: 0;
+  height: 100%;
+  
+  .modal-content {
+    height: 100%;
+    border-radius: 0;
+  }
+  
+  .modal-body {
+    max-height: none;
+    overflow-y: auto;
+  }
+}
+
+// Modal animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// =============================================================================
+// DROPDOWN
+// =============================================================================
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: spacing(2);
+  cursor: pointer;
+  
+  &::after {
+    content: '';
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: spacing(2);
+    vertical-align: middle;
+    border-top: 0.3em solid;
+    border-right: 0.3em solid transparent;
+    border-left: 0.3em solid transparent;
+    transition: transform $transition-base;
+  }
+  
+  &.show::after {
+    transform: rotate(180deg);
+  }
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: $zindex-dropdown;
+  display: none;
+  min-width: 200px;
+  padding: spacing(2) 0;
+  margin: spacing(2) 0 0;
+  font-size: $font-size-base;
+  color: $text-primary;
+  text-align: left;
+  list-style: none;
+  background-color: $white;
+  background-clip: padding-box;
+  border-radius: $border-radius;
+  box-shadow: $shadow-lg;
+  
+  &.show {
+    display: block;
+  }
+}
+
+.dropdown-menu-right {
+  right: 0;
+  left: auto;
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  padding: spacing(3) spacing(4);
+  clear: both;
+  font-weight: $font-weight-normal;
+  color: $text-primary;
+  text-align: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: transparent;
+  border: 0;
+  transition: $transition-base;
+  cursor: pointer;
+  
+  &:hover,
+  &:focus {
+    color: $text-primary;
+    background-color: $gray-100;
+  }
+  
+  &.active {
+    color: $white;
+    background-color: $accent;
+  }
+  
+  &:disabled {
+    color: $text-muted;
+    pointer-events: none;
+    background-color: transparent;
+  }
+}
+
+.dropdown-divider {
+  height: 0;
+  margin: spacing(2) 0;
+  overflow: hidden;
+  border-top: 1px solid $border-color;
+}
+
+.dropdown-header {
+  display: block;
+  padding: spacing(2) spacing(4);
+  margin-bottom: 0;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+// =============================================================================
+// TOOLTIP
+// =============================================================================
+
+.tooltip {
+  position: absolute;
+  z-index: $zindex-tooltip;
+  display: block;
+  margin: 0;
+  font-family: $font-primary;
+  font-style: normal;
+  font-weight: $font-weight-normal;
+  line-height: $line-height-normal;
+  text-align: left;
+  text-decoration: none;
+  text-shadow: none;
+  text-transform: none;
+  letter-spacing: normal;
+  word-break: normal;
+  word-spacing: normal;
+  white-space: normal;
+  line-break: auto;
+  font-size: $font-size-sm;
+  word-wrap: break-word;
+  opacity: 0;
+  
+  &.show {
+    opacity: 1;
+  }
+}
+
+.tooltip-inner {
+  max-width: 200px;
+  padding: spacing(2) spacing(3);
+  color: $white;
+  text-align: center;
+  background-color: rgba($black, 0.9);
+  border-radius: $border-radius;
+}
+
+.tooltip-arrow {
+  position: absolute;
+  display: block;
+  width: 0.8rem;
+  height: 0.4rem;
+  
+  &::before {
+    position: absolute;
+    content: '';
+    border-color: transparent;
+    border-style: solid;
+  }
+}
+
+// Tooltip placement
+.tooltip-top {
+  padding: 0.4rem 0;
+  
+  .tooltip-arrow {
+    bottom: 0;
+    
+    &::before {
+      top: 0;
+      border-width: 0.4rem 0.4rem 0;
+      border-top-color: rgba($black, 0.9);
+    }
+  }
+}
+
+.tooltip-bottom {
+  padding: 0.4rem 0;
+  
+  .tooltip-arrow {
+    top: 0;
+    
+    &::before {
+      bottom: 0;
+      border-width: 0 0.4rem 0.4rem;
+      border-bottom-color: rgba($black, 0.9);
+    }
+  }
+}
+
+// =============================================================================
+// POPOVER
+// =============================================================================
+
+.popover {
+  position: absolute;
+  z-index: $zindex-popover;
+  display: block;
+  max-width: 276px;
+  font-family: $font-primary;
+  font-size: $font-size-sm;
+  background-color: $white;
+  background-clip: padding-box;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-lg;
+}
+
+.popover-header {
+  padding: spacing(3) spacing(4);
+  margin-bottom: 0;
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  color: $text-primary;
+  background-color: $gray-100;
+  border-bottom: 1px solid $border-color;
+  border-top-left-radius: $border-radius;
+  border-top-right-radius: $border-radius;
+  
+  &:empty {
+    display: none;
+  }
+}
+
+.popover-body {
+  padding: spacing(4);
+  color: $text-primary;
+}

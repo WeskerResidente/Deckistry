@@ -1,0 +1,347 @@
+// // =============================================================================
+// // GRID SYSTEM
+// // =============================================================================
+
+// .container {
+//   width: 100%;
+//   margin-left: auto;
+//   margin-right: auto;
+//   padding-left: spacing(4);
+//   padding-right: spacing(4);
+  
+//   // @include respond-above(sm) {
+//   //   max-width: 540px;
+//   // }
+  
+//   // @include respond-above(md) {
+//   //   max-width: 720px;
+//   // }
+  
+//   // @include respond-above(lg) {
+//   //   max-width: 960px;
+//   // }
+  
+//   // @include respond-above(xl) {
+//   //   max-width: 1140px;
+//   // }
+  
+//   // @include respond-above(xxl) {
+//   //   max-width: 1320px;
+//   // }
+// }
+
+// .container-fluid {
+//   width: 100%;
+//   padding-left: spacing(4);
+//   padding-right: spacing(4);
+//   margin-left: auto;
+//   margin-right: auto;
+// }
+
+// .container-narrow {
+//   @extend .container;
+  
+//   @include respond-above(md) {
+//     max-width: 800px;
+//   }
+// }
+
+// // Row
+// .row {
+//   display: flex;
+//   flex-wrap: wrap;
+//   margin-left: -#{spacing(4)};
+//   margin-right: -#{spacing(4)};
+// }
+
+// .row-no-gutters {
+//   margin-left: 0;
+//   margin-right: 0;
+  
+//   > [class*="col-"] {
+//     padding-left: 0;
+//     padding-right: 0;
+//   }
+// }
+
+// // Columns
+// [class*="col-"] {
+//   position: relative;
+//   width: 100%;
+//   padding-left: spacing(4);
+//   padding-right: spacing(4);
+// }
+
+// // Base columns
+// .col {
+//   flex-basis: 0;
+//   flex-grow: 1;
+//   max-width: 100%;
+// }
+
+// .col-auto {
+//   flex: 0 0 auto;
+//   width: auto;
+// }
+
+// // Generate column classes
+// @for $i from 1 through 12 {
+//   .col-#{$i} {
+//     flex: 0 0 percentage($i / 12);
+//     max-width: percentage($i / 12);
+//   }
+// }
+
+// // Responsive columns
+// @each $breakpoint, $width in $breakpoints {
+//   @include respond-above($breakpoint) {
+//     @for $i from 1 through 12 {
+//       .col-#{$breakpoint}-#{$i} {
+//         flex: 0 0 percentage($i / 12);
+//         max-width: percentage($i / 12);
+//       }
+//     }
+    
+//     .col-#{$breakpoint} {
+//       flex-basis: 0;
+//       flex-grow: 1;
+//       max-width: 100%;
+//     }
+    
+//     .col-#{$breakpoint}-auto {
+//       flex: 0 0 auto;
+//       width: auto;
+//     }
+//   }
+// }
+
+// // =============================================================================
+// // LAYOUT HELPERS
+// // =============================================================================
+
+// .main-content {
+//   min-height: calc(100vh - 400px);
+//   padding: spacing(8) 0;
+  
+//   &.with-sidebar {
+//     margin-left: 280px;
+    
+//     @include respond-below(lg) {
+//       margin-left: 0;
+//     }
+//   }
+  
+//   &.with-header {
+//     margin-top: 70px;
+//   }
+// }
+
+// .page-header {
+//   margin-bottom: spacing(8);
+//   padding-bottom: spacing(5);
+//   border-bottom: 2px solid $border-color;
+  
+//   h1 {
+//     margin: 0 0 spacing(3) 0;
+//     font-size: $font-size-3xl;
+//     font-weight: $font-weight-bold;
+//     color: $text-primary;
+//   }
+  
+//   .page-description {
+//     font-size: $font-size-lg;
+//     color: $text-secondary;
+//     margin: 0;
+//   }
+  
+//   .page-actions {
+//     display: flex;
+//     gap: spacing(3);
+//     margin-top: spacing(4);
+    
+//     @include respond-below(sm) {
+//       flex-direction: column;
+//     }
+//   }
+// }
+
+// .section {
+//   margin-bottom: spacing(8);
+  
+//   &:last-child {
+//     margin-bottom: 0;
+//   }
+// }
+
+// .section-header {
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   margin-bottom: spacing(5);
+  
+//   @include respond-below(sm) {
+//     flex-direction: column;
+//     align-items: flex-start;
+//     gap: spacing(3);
+//   }
+  
+//   h2 {
+//     margin: 0;
+//     font-size: $font-size-2xl;
+//     font-weight: $font-weight-bold;
+//     color: $text-primary;
+//   }
+  
+//   .section-actions {
+//     display: flex;
+//     gap: spacing(2);
+//   }
+// }
+
+// // =============================================================================
+// // TWO COLUMN LAYOUT
+// // =============================================================================
+
+// .two-column-layout {
+//   display: grid;
+//   grid-template-columns: 280px 1fr;
+//   gap: spacing(8);
+  
+//   @include respond-below(lg) {
+//     grid-template-columns: 1fr;
+//   }
+// }
+
+// .layout-sidebar {
+//   @include respond-below(lg) {
+//     display: none;
+//   }
+// }
+
+// .layout-main {
+//   min-width: 0; // Prevent overflow
+// }
+
+// // =============================================================================
+// // SPLIT LAYOUT (50/50)
+// // =============================================================================
+
+// .split-layout {
+//   display: grid;
+//   grid-template-columns: repeat(2, 1fr);
+//   gap: spacing(8);
+  
+//   @include respond-below(md) {
+//     grid-template-columns: 1fr;
+//   }
+// }
+
+// // =============================================================================
+// // CARD GRID LAYOUTS
+// // =============================================================================
+
+// .cards-grid {
+//   display: grid;
+//   gap: spacing(6);
+  
+//   &.grid-2 {
+//     grid-template-columns: repeat(2, 1fr);
+    
+//     @include respond-below(md) {
+//       grid-template-columns: 1fr;
+//     }
+//   }
+  
+//   &.grid-3 {
+//     grid-template-columns: repeat(3, 1fr);
+    
+//     @include respond-below(lg) {
+//       grid-template-columns: repeat(2, 1fr);
+//     }
+    
+//     @include respond-below(sm) {
+//       grid-template-columns: 1fr;
+//     }
+//   }
+  
+//   &.grid-4 {
+//     grid-template-columns: repeat(4, 1fr);
+    
+//     @include respond-below(xl) {
+//       grid-template-columns: repeat(3, 1fr);
+//     }
+    
+//     @include respond-below(md) {
+//       grid-template-columns: repeat(2, 1fr);
+//     }
+    
+//     @include respond-below(sm) {
+//       grid-template-columns: 1fr;
+//     }
+//   }
+  
+//   &.grid-auto {
+//     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+//   }
+// }
+
+// // =============================================================================
+// // MASONRY LAYOUT
+// // =============================================================================
+
+// .masonry {
+//   column-count: 3;
+//   column-gap: spacing(6);
+  
+//   @include respond-below(lg) {
+//     column-count: 2;
+//   }
+  
+//   @include respond-below(sm) {
+//     column-count: 1;
+//   }
+  
+//   > * {
+//     break-inside: avoid;
+//     margin-bottom: spacing(6);
+//   }
+// }
+
+// // =============================================================================
+// // DECK BUILDER LAYOUT
+// // =============================================================================
+
+// .deck-builder-layout {
+//   display: grid;
+//   grid-template-columns: 350px 1fr 350px;
+//   gap: spacing(6);
+//   height: calc(100vh - 150px);
+  
+//   @include respond-below(xl) {
+//     grid-template-columns: 300px 1fr;
+    
+//     .deck-stats {
+//       display: none;
+//     }
+//   }
+  
+//   @include respond-below(lg) {
+//     grid-template-columns: 1fr;
+//     height: auto;
+    
+//     .card-search {
+//       order: 1;
+//     }
+    
+//     .deck-list {
+//       order: 2;
+//     }
+//   }
+  
+//   .card-search,
+//   .deck-list,
+//   .deck-stats {
+//     overflow-y: auto;
+//     @include custom-scrollbar;
+//   }
+// }

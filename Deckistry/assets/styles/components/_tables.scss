@@ -1,0 +1,349 @@
+// =============================================================================
+// TABLES
+// =============================================================================
+
+.table {
+  width: 100%;
+  margin-bottom: spacing(5);
+  color: $text-primary;
+  border-collapse: collapse;
+  
+  th,
+  td {
+    padding: spacing(3) spacing(4);
+    vertical-align: top;
+    border-bottom: 1px solid $border-color;
+  }
+  
+  thead th {
+    vertical-align: bottom;
+    font-weight: $font-weight-bold;
+    text-transform: uppercase;
+    font-size: $font-size-sm;
+    letter-spacing: 0.05em;
+    color: $text-secondary;
+    background-color: $gray-500;
+    border-bottom: 2px solid $border-color;
+  }
+  
+  tbody + tbody {
+    border-top: 2px solid $border-color;
+  }
+}
+
+// Table variants
+.table-bordered {
+  border: 1px solid $border-color;
+  
+  th,
+  td {
+    border: 1px solid $border-color;
+  }
+  
+  thead {
+    th,
+    td {
+      border-bottom-width: 2px;
+    }
+  }
+}
+
+.table-borderless {
+  th,
+  td,
+  thead th,
+  tbody + tbody {
+    border: 0;
+  }
+}
+
+.table-striped {
+  tbody tr:nth-of-type(odd) {
+    background-color: $gray-500;
+  }
+}
+
+.table-hover {
+  tbody tr {
+    transition: $transition-base;
+    cursor: pointer;
+    
+    &:hover {
+      background-color: $gray-100;
+    }
+  }
+}
+
+.table-sm {
+  th,
+  td {
+    padding: spacing(2) spacing(3);
+  }
+}
+
+// Table responsive wrapper
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  @include custom-scrollbar;
+  
+  > .table {
+    margin-bottom: 0;
+  }
+}
+
+// =============================================================================
+// CARD TABLE (for Magic cards list view)
+// =============================================================================
+
+.card-table {
+  @extend .table;
+  
+  .card-image-cell {
+    width: 80px;
+    padding: spacing(2);
+    
+    img {
+      width: 60px;
+      height: auto;
+      border-radius: $border-radius-sm;
+      box-shadow: $shadow;
+    }
+  }
+  
+  .card-name-cell {
+    font-weight: $font-weight-bold;
+    
+    a {
+      color: $text-primary;
+      text-decoration: none;
+      
+      &:hover {
+        color: $accent;
+      }
+    }
+  }
+  
+  .card-type-cell {
+    color: $text-secondary;
+    font-size: $font-size-sm;
+  }
+  
+  .card-mana-cell {
+    text-align: center;
+    white-space: nowrap;
+  }
+  
+  .card-rarity-cell {
+    text-align: center;
+  }
+  
+  .card-quantity-cell {
+    width: 100px;
+    text-align: center;
+    
+    .quantity-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: spacing(2);
+    }
+    
+    .quantity-btn {
+      @extend .btn;
+      @extend .btn-sm;
+      padding: spacing(1) spacing(2);
+      min-width: 2rem;
+    }
+    
+    .quantity-value {
+      min-width: 2rem;
+      text-align: center;
+      font-weight: $font-weight-bold;
+    }
+  }
+  
+  .card-actions-cell {
+    width: 100px;
+    text-align: right;
+    white-space: nowrap;
+    
+    .btn {
+      margin-left: spacing(1);
+    }
+  }
+}
+
+// =============================================================================
+// DECK TABLE (for deck list view)
+// =============================================================================
+
+.deck-table {
+  @extend .table;
+  
+  .deck-name-cell {
+    font-weight: $font-weight-bold;
+    
+    a {
+      color: $text-primary;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: spacing(2);
+      
+      &:hover {
+        color: $accent;
+      }
+    }
+    
+    .deck-visibility {
+      font-size: $font-size-xs;
+      opacity: 0.7;
+    }
+  }
+  
+  .deck-format-cell {
+    .badge {
+      font-size: $font-size-xs;
+    }
+  }
+  
+  .deck-colors-cell {
+    .badge-mana {
+      margin: 0 spacing(0.5);
+    }
+  }
+  
+  .deck-cards-cell {
+    text-align: center;
+    color: $text-secondary;
+  }
+  
+  .deck-updated-cell {
+    color: $text-muted;
+    font-size: $font-size-sm;
+    white-space: nowrap;
+  }
+  
+  .deck-actions-cell {
+    text-align: right;
+    white-space: nowrap;
+    
+    .dropdown {
+      display: inline-block;
+    }
+  }
+}
+
+// =============================================================================
+// SORTABLE TABLE
+// =============================================================================
+
+.table-sortable {
+  thead th {
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    padding-right: spacing(6);
+    
+    &.sortable {
+      &::after {
+        content: '⇅';
+        position: absolute;
+        right: spacing(3);
+        opacity: 0.3;
+        transition: $transition-base;
+      }
+      
+      &:hover::after {
+        opacity: 0.6;
+      }
+      
+      &.sort-asc::after {
+        content: '↑';
+        opacity: 1;
+      }
+      
+      &.sort-desc::after {
+        content: '↓';
+        opacity: 1;
+      }
+    }
+  }
+}
+
+// =============================================================================
+// TABLE WITH FIXED HEADER
+// =============================================================================
+
+.table-fixed-header {
+  display: block;
+  
+  thead {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+  }
+  
+  tbody {
+    display: block;
+    max-height: 400px;
+    overflow-y: auto;
+    @include custom-scrollbar;
+    
+    tr {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+  }
+}
+
+// =============================================================================
+// TABLE LOADING STATE
+// =============================================================================
+
+.table-loading {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba($white, 0.8);
+    @include flex-center;
+    z-index: 1;
+  }
+}
+
+// =============================================================================
+// EMPTY TABLE STATE
+// =============================================================================
+
+.table-empty {
+  text-align: center;
+  padding: spacing(10) spacing(5);
+  color: $text-muted;
+  
+  .empty-icon {
+    font-size: 3rem;
+    margin-bottom: spacing(4);
+    opacity: 0.5;
+  }
+  
+  .empty-title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    margin-bottom: spacing(2);
+  }
+  
+  .empty-description {
+    font-size: $font-size-base;
+    margin-bottom: spacing(5);
+  }
+}

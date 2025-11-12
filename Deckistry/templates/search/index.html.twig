@@ -1,0 +1,230 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recherche de cartes - Deckistry{% endblock %}
+
+{% block body %}
+<div class="search-page">
+    {# Hero Section with Search #}
+    <section class="search-hero">
+        <div class="container">
+            <h1 class="search-hero-title">Recherche de cartes Magic</h1>
+            <p class="search-hero-subtitle">Explorez plus de 25 000 cartes Magic: The Gathering</p>
+            
+            <form method="get" action="{{ path('app_search') }}" class="search-form">
+                <div class="search-input-wrapper">
+                    <input 
+                        type="text" 
+                        name="q" 
+                        value="{{ query }}" 
+                        placeholder="Rechercher une carte... (ex: Lightning Bolt, t:creature c:red)"
+                        class="search-input"
+                        autocomplete="off"
+                        id="searchInput"
+                        data-autocomplete-url="{{ path('api_cards_autocomplete') }}"
+                    >
+                    <button type="submit" class="search-button">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM19 19l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Rechercher
+                    </button>
+                </div>
+                
+                {# Search suggestions #}
+                <div class="search-suggestions" id="searchSuggestions"></div>
+            </form>
+
+            {# Quick Search Tips #}
+            <div class="search-tips">
+                <p class="search-tips-title">💡 Astuces de recherche :</p>
+                <div class="search-tips-list">
+                    <span class="search-tip">t:creature (type)</span>
+                    <span class="search-tip">c:red (couleur)</span>
+                    <span class="search-tip">pow>=4 (puissance)</span>
+                    <span class="search-tip">cmc<=3 (coût)</span>
+                    <span class="search-tip">set:war (édition)</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# Error Message #}
+    {% if error %}
+        <div class="container">
+            <div class="alert alert-danger">
+                {{ error }}
+            </div>
+        </div>
+    {% endif %}
+
+    {# Results Section #}
+    {% if query %}
+        <section class="search-results">
+            <div class="container">
+                {# Results Header #}
+                <div class="results-header">
+                    <h2 class="results-title">
+                        {% if cards|length > 0 %}
+                            {{ total_cards }} carte(s) trouvée(s) pour "{{ query }}"
+                        {% else %}
+                            Aucune carte trouvée pour "{{ query }}"
+                        {% endif %}
+                    </h2>
+                    
+                    {% if cards|length > 0 %}
+                        <div class="results-info">
+                            Page {{ current_page }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                {# Cards Grid #}
+                {% if cards|length > 0 %}
+                    <div class="cards-grid">
+                        {% for card in cards %}
+                            <div class="card-item">
+                                <div class="card-image-wrapper">
+                                    {% if card.getBestImageUri() %}
+                                        <img 
+                                            src="{{ card.getBestImageUri() }}" 
+                                            alt="{{ card.name }}"
+                                            class="card-image"
+                                            loading="lazy"
+                                        >
+                                    {% else %}
+                                        <div class="card-placeholder">
+                                            <span>Pas d'image</span>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <div class="card-overlay">
+                                        <button class="btn btn-primary btn-sm" onclick="addToCollection('{{ card.id }}')">
+                                            + Collection
+                                        </button>
+                                        <a href="{{ card.scryfallUri }}" target="_blank" class="btn btn-secondary btn-sm">
+                                            Voir sur Scryfall
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <div class="card-info">
+                                    <h3 class="card-name">{{ card.name }}</h3>
+                                    
+                                    {% if card.manaCost %}
+                                        <div class="card-mana">{{ card.manaCost|raw }}</div>
+                                    {% endif %}
+                                    
+                                    <p class="card-type">{{ card.typeLine }}</p>
+                                    
+                                    {% if card.getStats() %}
+                                        <p class="card-stats">{{ card.getStats() }}</p>
+                                    {% endif %}
+                                    
+                                    <div class="card-set">
+                                        {{ card.setName }} ({{ card.setCode|upper }})
+                                    </div>
+                                    
+                                    {% if card.eurPrice %}
+                                        <div class="card-price">€{{ card.eurPrice }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    {# Pagination #}
+                    <div class="pagination">
+                        {% if current_page > 1 %}
+                            <a href="{{ path('app_search', {q: query, page: current_page - 1}) }}" class="pagination-btn">
+                                ← Précédent
+                            </a>
+                        {% endif %}
+                        
+                        <span class="pagination-current">Page {{ current_page }}</span>
+                        
+                        {% if has_more %}
+                            <a href="{{ path('app_search', {q: query, page: current_page + 1}) }}" class="pagination-btn">
+                                Suivant →
+                            </a>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="no-results">
+                        <div class="no-results-icon">🔍</div>
+                        <h3>Aucune carte trouvée</h3>
+                        <p>Essayez avec d'autres termes de recherche ou utilisez les filtres avancés</p>
+                        <a href="https://scryfall.com/docs/syntax" target="_blank" class="btn btn-secondary">
+                            Voir la syntaxe de recherche
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+    {% else %}
+        {# Empty state - Popular Cards #}
+        <section class="popular-searches">
+            <div class="container">
+                <h2 class="section-title">Recherches populaires</h2>
+                <div class="popular-list">
+                    <a href="{{ path('app_search', {q: 'lightning bolt'}) }}" class="popular-item">
+                        ⚡ Lightning Bolt
+                    </a>
+                    <a href="{{ path('app_search', {q: 't:creature c:red pow>=4'}) }}" class="popular-item">
+                        🔥 Créatures rouges puissantes
+                    </a>
+                    <a href="{{ path('app_search', {q: 't:planeswalker'}) }}" class="popular-item">
+                        👑 Planeswalkers
+                    </a>
+                    <a href="{{ path('app_search', {q: 't:legendary t:creature'}) }}" class="popular-item">
+                        ⭐ Créatures légendaires
+                    </a>
+                    <a href="{{ path('app_search', {q: 't:artifact cmc<=3'}) }}" class="popular-item">
+                        🔧 Artefacts économiques
+                    </a>
+                    <a href="{{ path('app_search', {q: 'set:war'}) }}" class="popular-item">
+                        📦 War of the Spark
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        {# Advanced Search Help #}
+        <section class="search-help">
+            <div class="container">
+                <h2 class="section-title">Guide de recherche avancée</h2>
+                <div class="help-grid">
+                    <div class="help-card">
+                        <h3>🎯 Par type</h3>
+                        <code>t:creature</code>
+                        <code>t:instant</code>
+                        <code>t:legendary</code>
+                    </div>
+                    <div class="help-card">
+                        <h3>🎨 Par couleur</h3>
+                        <code>c:red</code>
+                        <code>c:wr (blanc et rouge)</code>
+                        <code>c<=boros</code>
+                    </div>
+                    <div class="help-card">
+                        <h3>💪 Par statistiques</h3>
+                        <code>pow>=4</code>
+                        <code>tou<=2</code>
+                        <code>cmc=3</code>
+                    </div>
+                    <div class="help-card">
+                        <h3>📦 Par édition</h3>
+                        <code>set:war</code>
+                        <code>set:dom OR set:m19</code>
+                        <code>r:mythic</code>
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ importmap('search') }}
+{% endblock %}

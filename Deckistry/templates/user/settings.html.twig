@@ -1,0 +1,279 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paramètres{% endblock %}
+
+{% block body %}
+<div class="settings-page">
+    <div class="settings-container">
+        <div class="settings-header">
+            <h1>⚙️ Paramètres</h1>
+            <p class="subtitle">Gérez votre compte et vos préférences</p>
+        </div>
+
+        {# Messages flash #}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM8 15L3 10L4.41 8.59L8 12.17L15.59 4.58L17 6L8 15Z" fill="#4CAF50"/>
+                </svg>
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-error">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM11 15H9V13H11V15ZM11 11H9V5H11V11Z" fill="#f44336"/>
+                </svg>
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <div class="settings-grid">
+            {# Section Profil #}
+            <div class="settings-card">
+                <div class="card-header">
+                    <h2>👤 Informations personnelles</h2>
+                    <p>Gérez vos informations de profil</p>
+                </div>
+                
+                <form method="post" enctype="multipart/form-data" class="settings-form">
+                    <input type="hidden" name="action" value="update_profile">
+                    
+                    {# Avatar Upload #}
+                    <div class="form-group avatar-upload-section">
+                        <label>Photo de profil</label>
+                        <div class="avatar-upload-container">
+                            <div class="avatar-preview">
+                                {% if user.avatar %}
+                                    <img src="{{ asset('uploads/avatars/' ~ user.avatar) }}" alt="{{ user.username }}" class="avatar-preview-image" id="avatarPreview">
+                                {% else %}
+                                    <div class="avatar-placeholder" id="avatarPreview">
+                                        {{ user.username|slice(0, 2)|upper }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="avatar-upload-actions">
+                                <label for="avatar" class="btn btn-secondary">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                                        <circle cx="12" cy="13" r="4"/>
+                                    </svg>
+                                    Choisir une photo
+                                </label>
+                                <input 
+                                    type="file" 
+                                    id="avatar" 
+                                    name="avatar" 
+                                    accept="image/jpeg,image/png,image/gif,image/webp"
+                                    style="display: none;"
+                                >
+                                {% if user.avatar %}
+                                    <button type="submit" name="action" value="delete_avatar" class="btn btn-danger">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <polyline points="3 6 5 6 21 6"/>
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                        </svg>
+                                        Supprimer
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <small class="form-text">JPG, PNG, GIF ou WEBP. Taille maximale : 2 Mo</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="username">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M8 8c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                            Pseudo
+                        </label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            value="{{ user.username }}" 
+                            placeholder="Votre pseudo"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nom">Nom</label>
+                            <input 
+                                type="text" 
+                                id="nom" 
+                                name="nom" 
+                                value="{{ user.nom }}" 
+                                placeholder="Votre nom"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="prenom">Prénom</label>
+                            <input 
+                                type="text" 
+                                id="prenom" 
+                                name="prenom" 
+                                value="{{ user.prenom }}" 
+                                placeholder="Votre prénom"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M14 3H2c-.55 0-1 .45-1 1v8c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1zm0 2l-6 4-6-4V4l6 4 6-4v1z"/>
+                            </svg>
+                            Email
+                        </label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            value="{{ user.email }}" 
+                            disabled
+                        >
+                        <small class="form-text">L'email ne peut pas être modifié</small>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>📅 Membre depuis :</strong> {{ user.createdAt|date('d/m/Y') }}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                        </svg>
+                        Enregistrer les modifications
+                    </button>
+                </form>
+            </div>
+
+            {# Section Sécurité #}
+            <div class="settings-card">
+                <div class="card-header">
+                    <h2>🔒 Sécurité</h2>
+                    <p>Gérez votre mot de passe et la sécurité de votre compte</p>
+                </div>
+
+                <form method="post" class="settings-form" id="passwordForm">
+                    <input type="hidden" name="action" value="change_password">
+                    
+                    <div class="form-group">
+                        <label for="current_password">Mot de passe actuel</label>
+                        <input 
+                            type="password" 
+                            id="current_password" 
+                            name="current_password" 
+                            placeholder="••••••••"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="new_password">Nouveau mot de passe</label>
+                        <input 
+                            type="password" 
+                            id="new_password" 
+                            name="new_password" 
+                            placeholder="••••••••"
+                            minlength="6"
+                            required
+                        >
+                        <small class="form-text">Minimum 6 caractères</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirm_password">Confirmer le nouveau mot de passe</label>
+                        <input 
+                            type="password" 
+                            id="confirm_password" 
+                            name="confirm_password" 
+                            placeholder="••••••••"
+                            minlength="6"
+                            required
+                        >
+                        <div id="passwordMatch" class="password-match"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="passwordSubmit">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                        </svg>
+                        Changer le mot de passe
+                    </button>
+                </form>
+
+                <div class="divider"></div>
+
+                <div class="security-info">
+                    <h3>Récupération de compte</h3>
+                    <p>Si vous avez oublié votre mot de passe, vous pouvez le réinitialiser.</p>
+                    <a href="{{ path('app_forgot_password') }}" class="btn btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+                        </svg>
+                        Mot de passe oublié
+                    </a>
+                </div>
+            </div>
+
+            {# Section Compte #}
+            <div class="settings-card">
+                <div class="card-header">
+                    <h2>🎯 Préférences</h2>
+                    <p>Personnalisez votre expérience</p>
+                </div>
+
+                <div class="preference-item">
+                    <div class="preference-info">
+                        <h3>🌙 Mode sombre</h3>
+                        <p>Activer le thème sombre</p>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="darkMode" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="preference-item">
+                    <div class="preference-info">
+                        <h3>📧 Notifications email</h3>
+                        <p>Recevoir des emails pour les nouveautés</p>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="emailNotif">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="danger-zone">
+                    <h3>⚠️ Zone de danger</h3>
+                    <p>Actions irréversibles sur votre compte</p>
+                    <button type="button" class="btn btn-danger" onclick="alert('Fonctionnalité à venir')">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                        </svg>
+                        Supprimer mon compte
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ importmap('settings') }}
+    {{ importmap('avatar-upload') }}
+{% endblock %}
+

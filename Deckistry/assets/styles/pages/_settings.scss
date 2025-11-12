@@ -1,0 +1,415 @@
+// =============================================================================
+// SETTINGS PAGE
+// User settings and preferences page styles
+// =============================================================================
+
+.settings-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, $bg-dark 0%, lighten($bg-dark, 5%) 100%);
+    padding: map-get($spacers, 7) map-get($spacers, 4);
+
+    @media (max-width: map-get($breakpoints, md)) {
+        padding: map-get($spacers, 5) map-get($spacers, 3);
+    }
+}
+
+.settings-container {
+    max-width: map-get($container-max-widths, xl);
+    margin: 0 auto;
+}
+
+// =============================================================================
+// HEADER
+// =============================================================================
+
+.settings-header {
+    text-align: center;
+    margin-bottom: map-get($spacers, 7);
+
+    h1 {
+        color: $text-light;
+        font-size: $font-size-4xl;
+        font-weight: $font-weight-bold;
+        margin-bottom: map-get($spacers, 2);
+
+        @media (max-width: map-get($breakpoints, md)) {
+            font-size: $font-size-3xl;
+        }
+    }
+
+    .subtitle {
+        color: $text-muted;
+        font-size: $font-size-lg;
+    }
+}
+
+// =============================================================================
+// ALERTS
+// =============================================================================
+
+.alert {
+    display: flex;
+    align-items: center;
+    gap: map-get($spacers, 3);
+    padding: map-get($spacers, 4) map-get($spacers, 5);
+    border-radius: $border-radius-lg;
+    margin-bottom: map-get($spacers, 5);
+    font-size: $font-size-base;
+    animation: slideDown 0.3s ease-out;
+
+    @keyframes slideDown {
+        from {
+            transform: translateY(-20px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+}
+
+.alert-success {
+    background: rgba($success, 0.15);
+    border: $border-width solid $success;
+    color: $success;
+}
+
+.alert-error {
+    background: rgba($danger, 0.15);
+    border: $border-width solid $danger;
+    color: $danger;
+}
+
+// =============================================================================
+// SETTINGS GRID
+// =============================================================================
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: map-get($spacers, 5);
+
+    @media (max-width: map-get($breakpoints, md)) {
+        grid-template-columns: 1fr;
+    }
+}
+
+// =============================================================================
+// SETTINGS CARD
+// =============================================================================
+
+.settings-card {
+    background: lighten($bg-dark, 10%);
+    border-radius: $border-radius-xl;
+    padding: map-get($spacers, 6);
+    box-shadow: $shadow-lg;
+}
+
+.card-header {
+    margin-bottom: map-get($spacers, 5);
+    padding-bottom: map-get($spacers, 4);
+    border-bottom: 2px solid lighten($bg-dark, 15%);
+
+    h2 {
+        color: $text-light;
+        font-size: $font-size-2xl;
+        font-weight: $font-weight-semibold;
+        margin-bottom: map-get($spacers, 2);
+    }
+
+    p {
+        color: $gray-600;
+        font-size: $font-size-sm;
+        margin: 0;
+    }
+}
+
+// =============================================================================
+// FORMS
+// =============================================================================
+
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: map-get($spacers, 4);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: map-get($spacers, 4);
+
+    @media (max-width: map-get($breakpoints, md)) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: map-get($spacers, 2);
+
+    label {
+        color: $text-muted;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-medium;
+        display: flex;
+        align-items: center;
+        gap: map-get($spacers, 2);
+
+        svg {
+            color: $primary;
+        }
+    }
+
+    input {
+        background: $bg-dark;
+        border: $border-width solid lighten($bg-dark, 15%);
+        border-radius: $border-radius;
+        padding: map-get($spacers, 3) map-get($spacers, 4);
+        color: $text-light;
+        font-size: $font-size-base;
+        transition: $transition-base;
+
+        &:focus {
+            outline: none;
+            border-color: $primary;
+            box-shadow: 0 0 0 3px rgba($primary, 0.1);
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+}
+
+.form-text {
+    color: $gray-600;
+    font-size: $font-size-xs;
+    margin-top: map-get($spacers, 1);
+}
+
+.info-box {
+    background: $bg-dark;
+    border: $border-width solid lighten($bg-dark, 15%);
+    border-radius: $border-radius;
+    padding: map-get($spacers, 3) map-get($spacers, 4);
+    color: $text-muted;
+    font-size: $font-size-sm;
+}
+
+// =============================================================================
+// PASSWORD VALIDATION
+// =============================================================================
+
+.password-match {
+    font-size: $font-size-sm;
+    margin-top: map-get($spacers, 1);
+}
+
+// =============================================================================
+// DIVIDER
+// =============================================================================
+
+.divider {
+    height: 1px;
+    background: lighten($bg-dark, 15%);
+    margin: map-get($spacers, 5) 0;
+}
+
+// =============================================================================
+// SECURITY INFO
+// =============================================================================
+
+.security-info,
+.danger-zone {
+    h3 {
+        color: $text-light;
+        font-size: $font-size-lg;
+        font-weight: $font-weight-semibold;
+        margin-bottom: map-get($spacers, 2);
+    }
+
+    p {
+        color: $gray-600;
+        font-size: $font-size-sm;
+        margin-bottom: map-get($spacers, 4);
+    }
+}
+
+.danger-zone {
+    background: rgba($danger, 0.05);
+    border: $border-width solid rgba($danger, 0.3);
+    border-radius: $border-radius-lg;
+    padding: map-get($spacers, 4);
+}
+
+// =============================================================================
+// PREFERENCES
+// =============================================================================
+
+.preference-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: map-get($spacers, 4) 0;
+    border-bottom: $border-width solid lighten($bg-dark, 15%);
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.preference-info {
+    h3 {
+        color: $text-light;
+        font-size: $font-size-base;
+        font-weight: $font-weight-medium;
+        margin-bottom: map-get($spacers, 1);
+    }
+
+    p {
+        color: $gray-600;
+        font-size: $font-size-sm;
+        margin: 0;
+    }
+}
+
+// =============================================================================
+// TOGGLE SWITCH
+// =============================================================================
+
+.toggle {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+
+    input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: lighten($bg-dark, 15%);
+    transition: $transition-base;
+    border-radius: $border-radius-pill;
+
+    &:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 4px;
+        bottom: 4px;
+        background-color: $white;
+        transition: $transition-base;
+        border-radius: $border-radius-circle;
+    }
+
+    input:checked + & {
+        background-color: $primary;
+
+        &:before {
+            transform: translateX(24px);
+        }
+    }
+}
+
+// =============================================================================
+// AVATAR UPLOAD
+// =============================================================================
+
+.avatar-upload-section {
+    margin-bottom: map-get($spacers, 5);
+    padding-bottom: map-get($spacers, 5);
+    border-bottom: 2px solid lighten($bg-dark, 15%);
+}
+
+.avatar-upload-container {
+    display: flex;
+    align-items: center;
+    gap: map-get($spacers, 5);
+
+    @media (max-width: map-get($breakpoints, md)) {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+.avatar-preview {
+    flex-shrink: 0;
+}
+
+.avatar-preview-image,
+.avatar-placeholder {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid lighten($bg-dark, 15%);
+}
+
+.avatar-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, $primary, lighten($primary, 15%));
+    color: $text-light;
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+}
+
+.avatar-upload-actions {
+    display: flex;
+    gap: map-get($spacers, 3);
+    flex-wrap: wrap;
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: map-get($spacers, 2);
+        padding: map-get($spacers, 3) map-get($spacers, 5);
+        border-radius: $border-radius;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-medium;
+        cursor: pointer;
+        transition: $transition-base;
+        border: none;
+
+        svg {
+            width: 16px;
+            height: 16px;
+        }
+    }
+
+    .btn-secondary {
+        background: lighten($bg-dark, 15%);
+        color: $text-light;
+
+        &:hover {
+            background: lighten($bg-dark, 20%);
+            transform: translateY(-2px);
+        }
+    }
+
+    .btn-danger {
+        background: $danger;
+        color: $text-light;
+
+        &:hover {
+            background: darken($danger, 10%);
+            transform: translateY(-2px);
+        }
+    }
+}

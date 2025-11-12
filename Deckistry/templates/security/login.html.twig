@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block body %}
+<section class="page-login">
+  <form method="post" action="{{ path('app_login') }}" class="form-login">
+
+    {% if app.user %}
+      <div class="login-info">
+        Connecté en tant que {{ app.user.userIdentifier }},
+        <a href="{{ path('app_logout') }}">Déconnexion</a>
+      </div>
+    {% endif %}
+
+    <h1 class="login-title">Connexion</h1>
+
+    {% if error %}
+    <div class="login-error">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <div class="login-field">
+      <label for="username">Email</label>
+      <input
+        type="email"
+        name="_username"
+        id="username"
+        class="input-login"
+        value="{{ last_username|default('') }}"
+        autocomplete="email"
+        required
+        autofocus
+      >
+    </div>
+
+    <div class="login-field">
+      <label for="password">Mot de passe</label>
+      <input
+        type="password"
+        name="_password"
+        id="password"
+        class="input-login"
+        autocomplete="current-password"
+        required
+      >
+      <div class="text-end mt-2">
+        <a href="{{ path('app_forgot_password') }}" class="text-decoration-none small">
+          Mot de passe oublié ?
+        </a>
+      </div>
+    </div>
+
+    <input
+      type="hidden"
+      name="_csrf_token"
+      value="{{ csrf_token('authenticate') }}"
+    >
+
+    <button class="btn-login" type="submit">Se connecter</button>
+  </form>
+</section>
+{% endblock %}

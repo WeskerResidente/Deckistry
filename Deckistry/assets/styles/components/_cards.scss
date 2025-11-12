@@ -1,0 +1,269 @@
+// =============================================================================
+// MAGIC CARD COMPONENT
+// =============================================================================
+
+.magic-card {
+  @include magic-card-layout;
+  cursor: pointer;
+  transition: transform $transition-base, box-shadow $transition-base;
+  
+  &:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: $shadow-xl;
+  }
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.magic-card-mini {
+  width: 150px;
+  aspect-ratio: $card-aspect-ratio;
+  border-radius: $border-radius;
+  overflow: hidden;
+  box-shadow: $shadow;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+// Card grid layout
+.card-grid {
+  @include auto-grid($card-width, spacing(5));
+  padding: spacing(5);
+  
+  @include respond-below(lg) {
+    @include auto-grid(200px, spacing(4));
+  }
+  
+  @include respond-below(md) {
+    @include auto-grid(150px, spacing(3));
+  }
+}
+
+// =============================================================================
+// GENERIC CARD COMPONENT
+// =============================================================================
+
+.card {
+  background: $white;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow;
+  overflow: hidden;
+  transition: $transition-base;
+  
+  &:hover {
+    box-shadow: $shadow-lg;
+  }
+}
+
+.card-header {
+  padding: spacing(4) spacing(5);
+  background: $gray-100;
+  border-bottom: $border-width solid $border-color;
+  
+  h3,
+  h4,
+  h5 {
+    margin: 0;
+  }
+}
+
+.card-body {
+  padding: spacing(5);
+}
+
+.card-footer {
+  padding: spacing(4) spacing(5);
+  background: $gray-100;
+  border-top: $border-width solid $border-color;
+}
+
+.card-img-top {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+// Card variants
+.card-bordered {
+  border: $border-width solid $border-color;
+}
+
+.card-elevated {
+  box-shadow: $shadow-lg;
+}
+
+.card-interactive {
+  cursor: pointer;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-xl;
+  }
+}
+
+// =============================================================================
+// DECK CARD
+// =============================================================================
+
+.deck-card {
+  @extend .card;
+  @extend .card-interactive;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  
+  .deck-card-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background: linear-gradient(135deg, $primary, $secondary);
+  }
+  
+  .deck-card-content {
+    padding: spacing(4);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .deck-card-title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    margin-bottom: spacing(2);
+    color: $text-primary;
+  }
+  
+  .deck-card-description {
+    color: $text-secondary;
+    margin-bottom: spacing(3);
+    @include line-clamp(3);
+    flex: 1;
+  }
+  
+  .deck-card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: $font-size-sm;
+    color: $text-muted;
+  }
+  
+  .deck-card-stats {
+    display: flex;
+    gap: spacing(3);
+    
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: spacing(1);
+    }
+  }
+}
+
+// =============================================================================
+// COLLECTION CARD
+// =============================================================================
+
+.collection-card {
+  @extend .card;
+  position: relative;
+  padding: spacing(4);
+  
+  .collection-card-quantity {
+    position: absolute;
+    top: spacing(2);
+    right: spacing(2);
+    background: $accent;
+    color: $white;
+    width: 2rem;
+    height: 2rem;
+    border-radius: $border-radius-circle;
+    @include flex-center;
+    font-weight: $font-weight-bold;
+    font-size: $font-size-sm;
+    box-shadow: $shadow;
+  }
+  
+  .collection-card-image {
+    width: 100%;
+    aspect-ratio: $card-aspect-ratio;
+    object-fit: cover;
+    border-radius: $border-radius;
+    margin-bottom: spacing(3);
+  }
+  
+  .collection-card-name {
+    font-weight: $font-weight-semibold;
+    margin-bottom: spacing(1);
+    @include truncate;
+  }
+  
+  .collection-card-set {
+    font-size: $font-size-sm;
+    color: $text-muted;
+    text-transform: uppercase;
+  }
+}
+
+// =============================================================================
+// INFO CARD
+// =============================================================================
+
+.info-card {
+  @extend .card;
+  padding: spacing(5);
+  text-align: center;
+  
+  .info-card-icon {
+    @include square(4rem);
+    margin: 0 auto spacing(4);
+    background: $accent;
+    color: $white;
+    border-radius: $border-radius-circle;
+    @include flex-center;
+    font-size: $font-size-3xl;
+  }
+  
+  .info-card-title {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    margin-bottom: spacing(2);
+  }
+  
+  .info-card-value {
+    font-size: $font-size-4xl;
+    font-weight: $font-weight-black;
+    color: $accent;
+    margin-bottom: spacing(2);
+  }
+  
+  .info-card-description {
+    color: $text-secondary;
+    font-size: $font-size-sm;
+  }
+}
+
+// Info card variants
+.info-card-success .info-card-icon {
+  background: $success;
+}
+
+.info-card-warning .info-card-icon {
+  background: $warning;
+}
+
+.info-card-danger .info-card-icon {
+  background: $danger;
+}
+
+.info-card-info .info-card-icon {
+  background: $info;
+}

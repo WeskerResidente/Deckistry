@@ -1,0 +1,335 @@
+// =============================================================================
+// NAVBAR
+// =============================================================================
+
+.navbar {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: spacing(4) spacing(5);
+  background-color: $primary;
+  box-shadow: $shadow-md;
+  
+  @include respond-below(md) {
+    padding: spacing(3) spacing(4);
+  }
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $white;
+  text-decoration: none;
+  transition: $transition-base;
+  
+  &:hover {
+    color: $accent;
+  }
+  
+  img {
+    height: 2.5rem;
+    margin-right: spacing(3);
+  }
+}
+
+.navbar-nav {
+  display: flex;
+  flex-direction: row;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: spacing(2);
+  
+  @include respond-below(md) {
+    flex-direction: column;
+    width: 100%;
+    padding-top: spacing(4);
+  }
+}
+
+.nav-item {
+  position: relative;
+}
+
+.nav-link {
+  display: block;
+  padding: spacing(3) spacing(4);
+  color: rgba($white, 0.85);
+  text-decoration: none;
+  border-radius: $border-radius;
+  transition: $transition-base;
+  font-weight: $font-weight-medium;
+  
+  &:hover {
+    color: $white;
+    background-color: rgba($white, 0.1);
+  }
+  
+  &.active {
+    color: $white;
+    background-color: $accent;
+  }
+}
+
+.navbar-toggler {
+  display: none;
+  padding: spacing(2);
+  font-size: $font-size-lg;
+  line-height: 1;
+  background: none;
+  border: none;
+  color: $white;
+  cursor: pointer;
+  
+  @include respond-below(md) {
+    display: block;
+  }
+}
+
+.navbar-collapse {
+  flex-basis: 100%;
+  flex-grow: 1;
+  align-items: center;
+  
+  @include respond-below(md) {
+    display: none;
+    
+    &.show {
+      display: block;
+    }
+  }
+}
+
+// =============================================================================
+// SIDEBAR NAVIGATION
+// =============================================================================
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 280px;
+  background-color: $secondary;
+  padding: spacing(6) 0;
+  box-shadow: $shadow-lg;
+  overflow-y: auto;
+  @include custom-scrollbar;
+  z-index: $zindex-sticky;
+  transition: transform $transition-base;
+  
+  @include respond-below(lg) {
+    transform: translateX(-100%);
+    
+    &.show {
+      transform: translateX(0);
+    }
+  }
+}
+
+.sidebar-header {
+  padding: 0 spacing(5) spacing(5);
+  border-bottom: 1px solid rgba($white, 0.1);
+  
+  .sidebar-brand {
+    @extend .navbar-brand;
+  }
+}
+
+.sidebar-nav {
+  padding: spacing(5) 0;
+  list-style: none;
+  margin: 0;
+}
+
+.sidebar-item {
+  margin-bottom: spacing(2);
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: spacing(3) spacing(5);
+  color: rgba($white, 0.7);
+  text-decoration: none;
+  transition: $transition-base;
+  
+  .sidebar-icon {
+    margin-right: spacing(3);
+    font-size: $font-size-lg;
+  }
+  
+  &:hover {
+    color: $white;
+    background-color: rgba($white, 0.05);
+  }
+  
+  &.active {
+    color: $white;
+    background-color: $accent;
+    border-left: 4px solid lighten($accent, 20%);
+  }
+}
+
+.sidebar-section-title {
+  padding: spacing(5) spacing(5) spacing(2);
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba($white, 0.5);
+}
+
+// =============================================================================
+// BREADCRUMB
+// =============================================================================
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  padding: spacing(3) 0;
+  margin-bottom: spacing(4);
+  list-style: none;
+  background-color: transparent;
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  
+  + .breadcrumb-item {
+    padding-left: spacing(2);
+    
+    &::before {
+      content: '/';
+      display: inline-block;
+      padding-right: spacing(2);
+      color: $text-muted;
+    }
+  }
+  
+  a {
+    color: $accent;
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  
+  &.active {
+    color: $text-muted;
+  }
+}
+
+// =============================================================================
+// PAGINATION
+// =============================================================================
+
+.pagination {
+  display: flex;
+  padding-left: 0;
+  list-style: none;
+  border-radius: $border-radius;
+  gap: spacing(2);
+}
+
+.page-item {
+  &.disabled .page-link {
+    color: $text-muted;
+    pointer-events: none;
+    background-color: $white;
+    border-color: $border-color;
+    opacity: 0.5;
+  }
+  
+  &.active .page-link {
+    color: $white;
+    background-color: $accent;
+    border-color: $accent;
+  }
+}
+
+.page-link {
+  position: relative;
+  display: block;
+  padding: spacing(2) spacing(3);
+  color: $accent;
+  text-decoration: none;
+  background-color: $white;
+  border: $border-width solid $border-color;
+  border-radius: $border-radius;
+  transition: $transition-base;
+  
+  &:hover {
+    color: darken($accent, 10%);
+    background-color: $gray-100;
+    border-color: $border-color;
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($accent, 0.1);
+  }
+}
+
+// =============================================================================
+// TABS
+// =============================================================================
+
+.nav-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: 2px solid $border-color;
+  margin-bottom: spacing(5);
+  list-style: none;
+  padding: 0;
+  gap: spacing(2);
+}
+
+.nav-tabs-item {
+  margin-bottom: -2px;
+}
+
+.nav-tabs-link {
+  display: block;
+  padding: spacing(3) spacing(5);
+  color: $text-secondary;
+  text-decoration: none;
+  border: 2px solid transparent;
+  border-bottom: none;
+  border-top-left-radius: $border-radius;
+  border-top-right-radius: $border-radius;
+  transition: $transition-base;
+  
+  &:hover {
+    color: $text-primary;
+    background-color: $gray-100;
+  }
+  
+  &.active {
+    color: $accent;
+    background-color: $white;
+    border-color: $border-color $border-color $white;
+    border-bottom: 2px solid $white;
+  }
+}
+
+.tab-content {
+  padding: spacing(5);
+  background: $white;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+}
+
+.tab-pane {
+  display: none;
+  
+  &.active {
+    display: block;
+  }
+}

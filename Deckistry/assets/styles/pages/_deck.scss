@@ -1,0 +1,583 @@
+// =============================================================================
+// DECK BUILDER PAGE
+// =============================================================================
+
+.deck-builder {
+  display: grid;
+  grid-template-columns: 400px 1fr 350px;
+  gap: spacing(6);
+  min-height: calc(100vh - 150px);
+  
+  @include respond-below(xl) {
+    grid-template-columns: 350px 1fr;
+  }
+  
+  @include respond-below(lg) {
+    grid-template-columns: 1fr;
+    gap: spacing(8);
+  }
+}
+
+// =============================================================================
+// CARD SEARCH PANEL
+// =============================================================================
+
+.deck-search-panel {
+  background: $white;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 150px);
+  
+  @include respond-below(lg) {
+    max-height: none;
+  }
+  
+  .search-header {
+    padding: spacing(5);
+    border-bottom: 1px solid $border-color;
+    
+    h2 {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-bold;
+      margin: 0 0 spacing(4) 0;
+    }
+    
+    .search-form {
+      position: relative;
+      
+      input {
+        width: 100%;
+        padding: spacing(3) spacing(4) spacing(3) spacing(10);
+        border: 1px solid $border-color;
+        border-radius: $border-radius;
+        
+        &:focus {
+          outline: none;
+          border-color: $accent;
+          box-shadow: 0 0 0 3px rgba($accent, 0.1);
+        }
+      }
+      
+      .search-icon {
+        position: absolute;
+        left: spacing(3);
+        top: 50%;
+        transform: translateY(-50%);
+        color: $text-muted;
+      }
+    }
+  }
+  
+  .search-filters {
+    padding: spacing(5);
+    border-bottom: 1px solid $border-color;
+    max-height: 300px;
+    overflow-y: auto;
+    @include custom-scrollbar;
+    
+    .filter-group {
+      margin-bottom: spacing(4);
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+      
+      .filter-label {
+        font-size: $font-size-sm;
+        font-weight: $font-weight-bold;
+        margin-bottom: spacing(2);
+        display: block;
+      }
+    }
+  }
+  
+  .search-results {
+    flex: 1;
+    overflow-y: auto;
+    @include custom-scrollbar;
+    padding: spacing(4);
+    
+    .results-count {
+      font-size: $font-size-sm;
+      color: $text-muted;
+      margin-bottom: spacing(4);
+      padding: 0 spacing(2);
+    }
+    
+    .card-result {
+      display: flex;
+      align-items: center;
+      padding: spacing(3);
+      border-radius: $border-radius;
+      margin-bottom: spacing(2);
+      cursor: pointer;
+      transition: $transition-base;
+      border: 1px solid transparent;
+      
+      &:hover {
+        background-color: $gray-500;
+        border-color: $accent;
+      }
+      
+      .card-image-thumb {
+        width: 50px;
+        height: 70px;
+        border-radius: $border-radius-sm;
+        object-fit: cover;
+        margin-right: spacing(3);
+        box-shadow: $shadow-sm;
+      }
+      
+      .card-info {
+        flex: 1;
+        min-width: 0;
+        
+        .card-name {
+          font-weight: $font-weight-bold;
+          margin-bottom: spacing(1);
+          color: $text-primary;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        
+        .card-details {
+          display: flex;
+          align-items: center;
+          gap: spacing(2);
+          font-size: $font-size-sm;
+          color: $text-muted;
+          
+          .card-mana {
+            display: flex;
+            gap: spacing(0.5);
+          }
+        }
+      }
+      
+      .add-button {
+        @extend .btn;
+        @extend .btn-sm;
+        @extend .btn-primary;
+        margin-left: spacing(2);
+        flex-shrink: 0;
+      }
+    }
+  }
+}
+
+// =============================================================================
+// DECK LIST PANEL
+// =============================================================================
+
+.deck-list-panel {
+  background: $white;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 150px);
+  
+  @include respond-below(lg) {
+    max-height: none;
+  }
+  
+  .deck-header {
+    padding: spacing(5);
+    border-bottom: 1px solid $border-color;
+    
+    .deck-title-input {
+      width: 100%;
+      font-size: $font-size-xl;
+      font-weight: $font-weight-bold;
+      border: none;
+      padding: spacing(2);
+      border-radius: $border-radius;
+      
+      &:hover {
+        background-color: $gray-500;
+      }
+      
+      &:focus {
+        outline: none;
+        background-color: $white;
+        box-shadow: 0 0 0 2px $accent;
+      }
+    }
+    
+    .deck-meta {
+      display: flex;
+      gap: spacing(4);
+      margin-top: spacing(4);
+      font-size: $font-size-sm;
+      color: $text-muted;
+      
+      .meta-item {
+        display: flex;
+        align-items: center;
+        gap: spacing(1);
+      }
+    }
+    
+    .deck-actions {
+      display: flex;
+      gap: spacing(2);
+      margin-top: spacing(4);
+    }
+  }
+  
+  .deck-categories {
+    display: flex;
+    border-bottom: 1px solid $border-color;
+    overflow-x: auto;
+    
+    .category-tab {
+      padding: spacing(3) spacing(5);
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      font-weight: $font-weight-medium;
+      color: $text-secondary;
+      white-space: nowrap;
+      transition: $transition-base;
+      
+      &:hover {
+        color: $text-primary;
+        background-color: $gray-500;
+      }
+      
+      &.active {
+        color: $accent;
+        border-bottom-color: $accent;
+      }
+      
+      .count {
+        margin-left: spacing(2);
+        font-size: $font-size-sm;
+        color: $text-muted;
+      }
+    }
+  }
+  
+  .deck-cards {
+    flex: 1;
+    overflow-y: auto;
+    @include custom-scrollbar;
+    padding: spacing(4);
+    
+    .cards-empty {
+      text-align: center;
+      padding: spacing(10);
+      color: $text-muted;
+      
+      .empty-icon {
+        font-size: 4rem;
+        margin-bottom: spacing(4);
+        opacity: 0.3;
+      }
+      
+      p {
+        font-size: $font-size-lg;
+      }
+    }
+    
+    .card-entry {
+      display: flex;
+      align-items: center;
+      padding: spacing(3);
+      border-radius: $border-radius;
+      margin-bottom: spacing(2);
+      transition: $transition-base;
+      
+      &:hover {
+        background-color: $gray-500;
+        
+        .card-actions {
+          opacity: 1;
+        }
+      }
+      
+      .card-image-thumb {
+        width: 50px;
+        height: 70px;
+        border-radius: $border-radius-sm;
+        object-fit: cover;
+        margin-right: spacing(3);
+        box-shadow: $shadow-sm;
+        cursor: pointer;
+      }
+      
+      .card-info {
+        flex: 1;
+        min-width: 0;
+        
+        .card-name {
+          font-weight: $font-weight-medium;
+          margin-bottom: spacing(1);
+          color: $text-primary;
+        }
+        
+        .card-cost {
+          display: flex;
+          gap: spacing(0.5);
+        }
+      }
+      
+      .card-quantity {
+        display: flex;
+        align-items: center;
+        gap: spacing(2);
+        margin: 0 spacing(3);
+        
+        button {
+          @extend .btn;
+          @extend .btn-sm;
+          padding: spacing(1) spacing(2);
+          min-width: 2rem;
+        }
+        
+        .quantity {
+          font-weight: $font-weight-bold;
+          min-width: 2rem;
+          text-align: center;
+        }
+      }
+      
+      .card-actions {
+        opacity: 0;
+        transition: $transition-base;
+        
+        .remove-btn {
+          @extend .btn;
+          @extend .btn-sm;
+          @extend .btn-danger;
+          padding: spacing(1) spacing(2);
+        }
+      }
+    }
+  }
+  
+  .deck-footer {
+    padding: spacing(4);
+    border-top: 1px solid $border-color;
+    background-color: $gray-500;
+    
+    .total-cards {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-bold;
+      text-align: center;
+      
+      .count {
+        color: $accent;
+        font-size: $font-size-2xl;
+      }
+    }
+  }
+}
+
+// =============================================================================
+// DECK STATS PANEL
+// =============================================================================
+
+.deck-stats-panel {
+  background: $white;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow;
+  padding: spacing(5);
+  max-height: calc(100vh - 150px);
+  overflow-y: auto;
+  @include custom-scrollbar;
+  
+  @include respond-below(xl) {
+    display: none;
+  }
+  
+  h3 {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    margin-bottom: spacing(5);
+  }
+  
+  .stat-section {
+    margin-bottom: spacing(6);
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    .stat-title {
+      font-size: $font-size-sm;
+      font-weight: $font-weight-bold;
+      margin-bottom: spacing(3);
+      color: $text-secondary;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+  }
+  
+  .mana-curve {
+    .curve-bar {
+      display: flex;
+      align-items: center;
+      margin-bottom: spacing(2);
+      
+      .cost-label {
+        width: 2rem;
+        font-weight: $font-weight-bold;
+        color: $text-secondary;
+      }
+      
+      .bar {
+        flex: 1;
+        height: 1.5rem;
+        background-color: $gray-200;
+        border-radius: $border-radius;
+        overflow: hidden;
+        
+        .fill {
+          height: 100%;
+          background: linear-gradient(90deg, $accent, lighten($accent, 15%));
+          transition: width 0.3s ease;
+        }
+      }
+      
+      .count {
+        margin-left: spacing(2);
+        font-weight: $font-weight-bold;
+        min-width: 2rem;
+        text-align: right;
+      }
+    }
+  }
+  
+  .color-distribution {
+    .color-pie {
+      display: flex;
+      height: 2rem;
+      border-radius: $border-radius;
+      overflow: hidden;
+      margin-bottom: spacing(4);
+      
+      .slice {
+        transition: flex 0.3s ease;
+        
+        &.white { background-color: $mtg-white; }
+        &.blue { background-color: $mtg-blue; }
+        &.black { background-color: $mtg-black; }
+        &.red { background-color: $mtg-red; }
+        &.green { background-color: $mtg-green; }
+      }
+    }
+    
+    .color-legend {
+      display: flex;
+      flex-direction: column;
+      gap: spacing(2);
+      
+      .legend-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: $font-size-sm;
+        
+        .color-name {
+          display: flex;
+          align-items: center;
+          gap: spacing(2);
+          
+          .color-dot {
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 50%;
+          }
+        }
+        
+        .percentage {
+          font-weight: $font-weight-bold;
+        }
+      }
+    }
+  }
+  
+  .type-breakdown {
+    .type-item {
+      display: flex;
+      justify-content: space-between;
+      padding: spacing(2) 0;
+      border-bottom: 1px solid $border-color;
+      
+      &:last-child {
+        border-bottom: none;
+      }
+      
+      .type-name {
+        font-weight: $font-weight-medium;
+      }
+      
+      .type-count {
+        font-weight: $font-weight-bold;
+        color: $accent;
+      }
+    }
+  }
+}
+
+// =============================================================================
+// CARD PREVIEW MODAL
+// =============================================================================
+
+.card-preview-modal {
+  .modal-dialog {
+    max-width: 800px;
+  }
+  
+  .card-preview-content {
+    display: flex;
+    gap: spacing(6);
+    
+    @include respond-below(md) {
+      flex-direction: column;
+    }
+    
+    .card-image-large {
+      width: 350px;
+      height: auto;
+      border-radius: $border-radius-lg;
+      box-shadow: $shadow-xl;
+      
+      @include respond-below(md) {
+        width: 100%;
+      }
+    }
+    
+    .card-details {
+      flex: 1;
+      
+      h3 {
+        font-size: $font-size-2xl;
+        font-weight: $font-weight-bold;
+        margin-bottom: spacing(4);
+      }
+      
+      .detail-row {
+        margin-bottom: spacing(3);
+        
+        .label {
+          font-size: $font-size-sm;
+          font-weight: $font-weight-bold;
+          color: $text-muted;
+          display: block;
+          margin-bottom: spacing(1);
+        }
+        
+        .value {
+          font-size: $font-size-base;
+          color: $text-primary;
+        }
+      }
+    }
+  }
+}

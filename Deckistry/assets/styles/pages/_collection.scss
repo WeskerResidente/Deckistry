@@ -1,0 +1,506 @@
+// =============================================================================
+// COLLECTION PAGE
+// =============================================================================
+
+.collection-page {
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: spacing(8);
+    
+    @include respond-below(md) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: spacing(4);
+    }
+    
+    h1 {
+      font-size: $font-size-3xl;
+      font-weight: $font-weight-bold;
+      margin: 0;
+    }
+    
+    .collection-actions {
+      display: flex;
+      gap: spacing(3);
+      
+      @include respond-below(sm) {
+        flex-direction: column;
+        width: 100%;
+      }
+    }
+  }
+  
+  .collection-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: spacing(6);
+    margin-bottom: spacing(8);
+    
+    @include respond-below(lg) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @include respond-below(sm) {
+      grid-template-columns: 1fr;
+    }
+    
+    .stat-card {
+      @extend .info-card;
+    }
+  }
+}
+
+// =============================================================================
+// COLLECTION TOOLBAR
+// =============================================================================
+
+.collection-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: spacing(4);
+  background: $white;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow;
+  margin-bottom: spacing(6);
+  
+  @include respond-below(md) {
+    flex-direction: column;
+    gap: spacing(4);
+    align-items: stretch;
+  }
+  
+  .toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: spacing(4);
+    flex: 1;
+    
+    @include respond-below(sm) {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .search-box {
+      position: relative;
+      flex: 1;
+      max-width: 400px;
+      
+      @include respond-below(sm) {
+        max-width: none;
+      }
+      
+      input {
+        width: 100%;
+        padding: spacing(2) spacing(4) spacing(2) spacing(10);
+        border: 1px solid $border-color;
+        border-radius: $border-radius;
+        
+        &:focus {
+          outline: none;
+          border-color: $accent;
+          box-shadow: 0 0 0 3px rgba($accent, 0.1);
+        }
+      }
+      
+      .search-icon {
+        position: absolute;
+        left: spacing(3);
+        top: 50%;
+        transform: translateY(-50%);
+        color: $text-muted;
+      }
+    }
+    
+    .filters-toggle {
+      @extend .btn;
+      @extend .btn-secondary;
+      white-space: nowrap;
+    }
+  }
+  
+  .toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: spacing(3);
+    
+    .view-toggle {
+      display: flex;
+      border: 1px solid $border-color;
+      border-radius: $border-radius;
+      overflow: hidden;
+      
+      button {
+        padding: spacing(2) spacing(3);
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: $text-secondary;
+        transition: $transition-base;
+        
+        &:not(:last-child) {
+          border-right: 1px solid $border-color;
+        }
+        
+        &.active {
+          background-color: $accent;
+          color: $white;
+        }
+        
+        &:hover:not(.active) {
+          background-color: $gray-100;
+        }
+      }
+    }
+    
+    .sort-select {
+      min-width: 200px;
+      
+      @include respond-below(sm) {
+        min-width: 150px;
+      }
+    }
+  }
+}
+
+// =============================================================================
+// COLLECTION FILTERS PANEL
+// =============================================================================
+
+.collection-filters {
+  background: $white;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow;
+  padding: spacing(5);
+  margin-bottom: spacing(6);
+  display: none;
+  
+  &.show {
+    display: block;
+  }
+  
+  .filters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: spacing(5);
+    
+    h3 {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-bold;
+      margin: 0;
+    }
+    
+    .clear-filters {
+      color: $accent;
+      text-decoration: none;
+      font-size: $font-size-sm;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+  
+  .filters-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: spacing(6);
+    
+    @include respond-below(lg) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @include respond-below(sm) {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .filter-group {
+    .filter-label {
+      font-size: $font-size-sm;
+      font-weight: $font-weight-bold;
+      margin-bottom: spacing(3);
+      display: block;
+    }
+  }
+}
+
+// =============================================================================
+// COLLECTION GRID VIEW
+// =============================================================================
+
+.collection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: spacing(6);
+  
+  @include respond-below(sm) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: spacing(4);
+  }
+  
+  .collection-card-item {
+    position: relative;
+    
+    .card-quantity-badge {
+      position: absolute;
+      top: spacing(2);
+      right: spacing(2);
+      z-index: 1;
+      @extend .badge-quantity;
+    }
+    
+    .magic-card {
+      height: 100%;
+      cursor: pointer;
+      
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: $shadow-xl;
+      }
+    }
+  }
+}
+
+// =============================================================================
+// COLLECTION LIST VIEW
+// =============================================================================
+
+.collection-list {
+  background: $white;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow;
+  overflow: hidden;
+  
+  .list-item {
+    display: flex;
+    align-items: center;
+    padding: spacing(4);
+    border-bottom: 1px solid $border-color;
+    transition: $transition-base;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    &:hover {
+      background-color: $gray-500;
+      
+      .item-actions {
+        opacity: 1;
+      }
+    }
+    
+    .item-image {
+      width: 60px;
+      height: 85px;
+      border-radius: $border-radius-sm;
+      object-fit: cover;
+      margin-right: spacing(4);
+      box-shadow: $shadow-sm;
+      cursor: pointer;
+    }
+    
+    .item-info {
+      flex: 1;
+      min-width: 0;
+      
+      .item-name {
+        font-size: $font-size-lg;
+        font-weight: $font-weight-bold;
+        margin-bottom: spacing(2);
+        color: $text-primary;
+      }
+      
+      .item-details {
+        display: flex;
+        align-items: center;
+        gap: spacing(3);
+        font-size: $font-size-sm;
+        color: $text-secondary;
+        
+        .mana-cost {
+          display: flex;
+          gap: spacing(0.5);
+        }
+      }
+    }
+    
+    .item-quantity {
+      display: flex;
+      align-items: center;
+      gap: spacing(3);
+      margin: 0 spacing(6);
+      
+      button {
+        @extend .btn;
+        @extend .btn-sm;
+        padding: spacing(1) spacing(2);
+        min-width: 2rem;
+      }
+      
+      .quantity {
+        font-size: $font-size-xl;
+        font-weight: $font-weight-bold;
+        min-width: 3rem;
+        text-align: center;
+      }
+    }
+    
+    .item-value {
+      text-align: right;
+      margin-right: spacing(6);
+      
+      .price {
+        font-size: $font-size-lg;
+        font-weight: $font-weight-bold;
+        color: $accent;
+        display: block;
+        margin-bottom: spacing(1);
+      }
+      
+      .total {
+        font-size: $font-size-sm;
+        color: $text-muted;
+      }
+    }
+    
+    .item-actions {
+      display: flex;
+      gap: spacing(2);
+      opacity: 0;
+      transition: $transition-base;
+    }
+  }
+}
+
+// =============================================================================
+// COLLECTION COMPACT VIEW
+// =============================================================================
+
+.collection-compact {
+  background: $white;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow;
+  overflow: hidden;
+  
+  .compact-table {
+    width: 100%;
+    
+    thead {
+      background-color: $gray-500;
+      
+      th {
+        padding: spacing(3) spacing(4);
+        font-size: $font-size-sm;
+        font-weight: $font-weight-bold;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: $text-secondary;
+        border-bottom: 2px solid $border-color;
+      }
+    }
+    
+    tbody {
+      tr {
+        border-bottom: 1px solid $border-color;
+        transition: $transition-base;
+        cursor: pointer;
+        
+        &:hover {
+          background-color: $gray-500;
+        }
+        
+        td {
+          padding: spacing(3) spacing(4);
+          font-size: $font-size-sm;
+        }
+      }
+    }
+  }
+}
+
+// =============================================================================
+// COLLECTION EMPTY STATE
+// =============================================================================
+
+.collection-empty {
+  text-align: center;
+  padding: spacing(15) spacing(5);
+  
+  .empty-icon {
+    font-size: 5rem;
+    color: $text-muted;
+    opacity: 0.3;
+    margin-bottom: spacing(5);
+  }
+  
+  h2 {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    margin-bottom: spacing(3);
+    color: $text-primary;
+  }
+  
+  p {
+    font-size: $font-size-lg;
+    color: $text-secondary;
+    margin-bottom: spacing(8);
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .empty-actions {
+    display: flex;
+    justify-content: center;
+    gap: spacing(4);
+    
+    @include respond-below(sm) {
+      flex-direction: column;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+  }
+}
+
+// =============================================================================
+// BULK ACTIONS BAR
+// =============================================================================
+
+.bulk-actions-bar {
+  position: fixed;
+  bottom: spacing(6);
+  left: 50%;
+  transform: translateX(-50%);
+  background: $secondary;
+  color: $white;
+  padding: spacing(4) spacing(6);
+  border-radius: $border-radius-pill;
+  box-shadow: $shadow-xl;
+  display: none;
+  z-index: $zindex-sticky;
+  
+  &.show {
+    display: flex;
+    align-items: center;
+    gap: spacing(6);
+  }
+  
+  .selected-count {
+    font-weight: $font-weight-bold;
+    
+    .count {
+      font-size: $font-size-xl;
+      color: $accent;
+    }
+  }
+  
+  .bulk-actions {
+    display: flex;
+    gap: spacing(2);
+  }
+}
