@@ -18,12 +18,13 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class DeckApiController extends AbstractController
 {
     #[Route('/deck/{id}', name: 'api_deck_get', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
-    public function getDeck(Deck $deck): JsonResponse
+    public function getDeck(Deck $deck, CardRepository $cardRepository): JsonResponse
     {
-        // Vérifier l'accès
-        if ($deck->isPrivate() && $deck->getUser() !== $this->getUser()) {
-            return $this->json(['error' => 'Access denied'], Response::HTTP_FORBIDDEN);
+        // Vérifier l'accès pour les decks privés seulement
+        if ($deck->isPrivate()) {
+            if (!$this->getUser() || $deck->getUser() !== $this->getUser()) {
+                return $this->json(['error' => 'Access denied'], Response::HTTP_FORBIDDEN);
+            }
         }
 
         $cardsData = [];
@@ -50,6 +51,30 @@ class DeckApiController extends AbstractController
             }
         }
 
+        // Récupérer les détails du commander si défini
+        $commanderData = null;
+        if ($deck->getCommanderId()) {
+            $commanderCard = $cardRepository->findOneBy(['scryfallId' => $deck->getCommanderId()]);
+            if ($commanderCard) {
+                $commanderData = [
+                    'id' => $commanderCard->getScryfallId(),
+                    'scryfallId' => $commanderCard->getScryfallId(),
+                    'name' => $commanderCard->getName(),
+                    'typeLine' => $commanderCard->getTypeLine(),
+                    'manaCost' => $commanderCard->getManaCost(),
+                    'oracleText' => $commanderCard->getOracleText(),
+                    'imageUri' => $commanderCard->getImageUri(),
+                    'imageUriSmall' => $commanderCard->getImageUriSmall(),
+                    'colors' => $commanderCard->getColors(),
+                    'colorIdentity' => $commanderCard->getColorIdentity(),
+                    'cmc' => $commanderCard->getCmc(),
+                    'rarity' => $commanderCard->getRarity(),
+                    'setCode' => $commanderCard->getSetCode(),
+                    'setName' => $commanderCard->getSetName(),
+                ];
+            }
+        }
+
         return $this->json([
             'success' => true,
             'deck' => [
@@ -58,6 +83,7 @@ class DeckApiController extends AbstractController
                 'format' => $deck->getFormat(),
                 'isPrivate' => $deck->isPrivate(),
                 'commanderId' => $deck->getCommanderId(),
+                'commander' => $commanderData,
                 'cards' => $cardsData,
             ]
         ]);
@@ -78,14 +104,22 @@ class DeckApiController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
 
+        error_log("=== DÉBUT SAUVEGARDE DECK {$deck->getId()} ===");
+        error_log("Commander reçu: " . json_encode($data['commander'] ?? null));
+        error_log("Nombre de cartes reçues: " . count($data['cards'] ?? []));
+
         if (!isset($data['cards']) || !is_array($data['cards'])) {
+            error_log("Erreur: données invalides");
             return $this->json(['error' => 'Invalid data'], Response::HTTP_BAD_REQUEST);
         }
 
         // Mettre à jour le commander
         if (isset($data['commander']) && is_array($data['commander'])) {
-            $deck->setCommanderId($data['commander']['id'] ?? null);
+            $commanderId = $data['commander']['id'] ?? null;
+            error_log("Mise à jour commander ID: $commanderId");
+            $deck->setCommanderId($commanderId);
         } else {
+            error_log("Suppression du commander");
             $deck->setCommanderId(null);
         }
 
@@ -101,12 +135,11 @@ class DeckApiController extends AbstractController
                 continue;
             }
 
-            // Récupérer la carte dans la base de données
-            $card = $cardRepository->find($cardData['scryfallId']);
+            // Récupérer la carte (depuis BDD ou Scryfall si nécessaire)
+            $card = $cardRepository->findOrFetchFromScryfall($cardData['scryfallId']);
             
             if (!$card) {
-                // La carte n'existe pas en BDD - elle devrait avoir été créée lors de l'ajout
-                error_log("Carte non trouvée en BDD: " . $cardData['scryfallId']);
+                error_log("Impossible de récupérer la carte: " . $cardData['scryfallId']);
                 continue;
             }
 
@@ -114,6 +147,7 @@ class DeckApiController extends AbstractController
             $deckCard->setDeck($deck);
             $deckCard->setCard($card);
             $deckCard->setQuantity($cardData['quantity']);
+            $deckCard->setIsFoil($cardData['isFoil'] ?? false);
 
             $em->persist($deckCard);
         }
@@ -121,9 +155,34 @@ class DeckApiController extends AbstractController
         $deck->setUpdatedAt(new \DateTime());
         $em->flush();
 
+        error_log("✅ Deck sauvegardé avec succès. Commander: " . ($deck->getCommanderId() ?? 'aucun') . ", Cartes: " . count($deck->getDeckCards()));
+        error_log("=== FIN SAUVEGARDE DECK {$deck->getId()} ===");
+
         return $this->json([
             'success' => true,
-            'message' => 'Deck updated successfully'
+            'message' => 'Deck updated successfully',
+            'commander' => $deck->getCommanderId(),
+            'cardCount' => count($deck->getDeckCards())
+        ]);
+    }
+
+    #[Route('/deck/{id}/toggle-privacy', name: 'api_deck_toggle_privacy', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
+    public function togglePrivacy(
+        Deck $deck,
+        EntityManagerInterface $em
+    ): JsonResponse {
+        // Vérifier le propriétaire
+        if ($deck->getUser() !== $this->getUser()) {
+            return $this->json(['error' => 'Access denied'], Response::HTTP_FORBIDDEN);
+        }
+
+        $deck->setIsPrivate(!$deck->isPrivate());
+        $em->flush();
+
+        return $this->json([
+            'success' => true,
+            'isPrivate' => $deck->isPrivate()
         ]);
     }
 

@@ -10,7 +10,7 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
-        window.DECK_ID = {{ deck.id }};
+        window.deckId = {{ deck.id }};
         window.DECK_VIEW_MODE = true;
     </script>
     {{ encore_entry_script_tags('deck-builder') }}
@@ -44,7 +44,7 @@
                         <i class="fas fa-arrow-left"></i> Back to Decks
                     </a>
                     {% if app.user and deck.user == app.user %}
-                        <a href="{{ path('app_deck_edit', {id: deck.id}) }}" class="btn btn-primary">
+                        <a href="{{ path('app_deck_edit', {username: deck.user.username, slug: deck.slug}) }}" class="btn btn-primary">
                             <i class="fas fa-edit"></i> Edit Deck
                         </a>
                     {% endif %}

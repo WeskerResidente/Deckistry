@@ -76,4 +76,53 @@ class CardRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Trouve ou récupère une carte depuis Scryfall si nécessaire
+     * Utilisé pour garantir qu'une carte existe toujours en BDD
+     */
+    public function findOrFetchFromScryfall(string $scryfallId): ?Card
+    {
+        // D'abord chercher en BDD
+        $card = $this->find($scryfallId);
+        
+        if ($card) {
+            return $card;
+        }
+
+        // Si pas en BDD, récupérer depuis Scryfall
+        try {
+            $scryfallUrl = "https://api.scryfall.com/cards/{$scryfallId}";
+            $context = stream_context_create([
+                'http' => [
+                    'timeout' => 10,
+                    'header' => "User-Agent: Deckistry/1.0\r\n"
+                ]
+            ]);
+            
+            $response = @file_get_contents($scryfallUrl, false, $context);
+            
+            if ($response === false) {
+                return null;
+            }
+            
+            $cardData = json_decode($response, true);
+            
+            if (!$cardData || !isset($cardData['id'])) {
+                return null;
+            }
+            
+            // Créer et sauvegarder la carte
+            $card = Card::fromScryfallData($cardData);
+            
+            $em = $this->getEntityManager();
+            $em->persist($card);
+            $em->flush();
+            
+            return $card;
+        } catch (\Exception $e) {
+            error_log("Error fetching card from Scryfall: " . $e->getMessage());
+            return null;
+        }
+    }
 }

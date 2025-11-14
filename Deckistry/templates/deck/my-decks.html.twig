@@ -15,7 +15,7 @@
                 <div class="deck-card">
                     <h3>{{ deck.name }}</h3>
                     <p>Format: {{ deck.format }}</p>
-                    <a href="{{ path('app_deck_edit', {id: deck.id}) }}" class="btn btn-primary">Éditer</a>
+                    <a href="{{ path('app_deck_edit', {username: deck.user.username, slug: deck.slug}) }}" class="btn btn-primary">Éditer</a>
                 </div>
             {% endfor %}
         </div>

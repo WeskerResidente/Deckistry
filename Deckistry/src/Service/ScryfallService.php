@@ -85,20 +85,27 @@ class ScryfallService
      * Search for cards using Scryfall's search syntax
      * 
      * @param string $query Scryfall search query (e.g., "lightning bolt", "t:creature c:red")
+     * @param string $lang Language code (e.g., "en", "fr", "ja")
      * @param int $page Page number (starts at 1)
      * @return array{data: CardDTO[], total_cards: int, has_more: bool}
      */
-    public function searchCards(string $query, int $page = 1): array
+    public function searchCards(string $query, string $lang = 'en', int $page = 1): array
     {
-        $cacheKey = "scryfall_search_" . md5($query . "_page_{$page}");
+        $cacheKey = "scryfall_search_" . md5($query . "_{$lang}_page_{$page}");
         
-        return $this->cache->get($cacheKey, function (ItemInterface $item) use ($query, $page) {
+        return $this->cache->get($cacheKey, function (ItemInterface $item) use ($query, $lang, $page) {
             $item->expiresAfter(self::CACHE_TTL);
             
             try {
+                // Ajouter le filtre de langue à la requête
+                $searchQuery = $query;
+                if ($lang !== 'any') {
+                    $searchQuery .= " lang:{$lang}";
+                }
+                
                 $response = $this->httpClient->request('GET', self::BASE_URL . '/cards/search', [
                     'query' => [
-                        'q' => $query,
+                        'q' => $searchQuery,
                         'page' => $page,
                         'format' => 'json',
                     ]
@@ -129,6 +136,7 @@ class ScryfallService
             } catch (TransportExceptionInterface $e) {
                 $this->logger->error('Scryfall API search error', [
                     'query' => $query,
+                    'lang' => $lang,
                     'page' => $page,
                     'error' => $e->getMessage()
                 ]);

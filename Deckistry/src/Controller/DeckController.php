@@ -36,12 +36,16 @@ class DeckController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $deck->setUser($this->getUser());
             $deck->setCreatedAt(new \DateTime());
+            $deck->generateSlug(); // Générer le slug automatiquement
             
             $em->persist($deck);
             $em->flush();
 
             $this->addFlash('success', 'Deck créé avec succès !');
-            return $this->redirectToRoute('app_deck_edit', ['id' => $deck->getId()]);
+            return $this->redirectToRoute('app_deck_edit', [
+                'username' => $this->getUser()->getUsername(),
+                'slug' => $deck->getSlug()
+            ]);
         }
 
         return $this->render('deck/new.html.twig', [
@@ -49,9 +53,15 @@ class DeckController extends AbstractController
         ]);
     }
 
-    #[Route('/deck/{id}', name: 'app_deck_view', requirements: ['id' => '\d+'])]
-    public function view(Deck $deck): Response
+    #[Route('/deck/{username}/{slug}', name: 'app_deck_view')]
+    public function view(string $username, string $slug, DeckRepository $deckRepository): Response
     {
+        $deck = $deckRepository->findOneBy(['slug' => $slug]);
+        
+        if (!$deck) {
+            throw $this->createNotFoundException('Deck not found');
+        }
+        
         // Vérifier si le deck est privé et que l'utilisateur n'est pas le propriétaire
         if ($deck->isPrivate() && $deck->getUser() !== $this->getUser()) {
             throw $this->createAccessDeniedException('Ce deck est privé.');
@@ -62,10 +72,16 @@ class DeckController extends AbstractController
         ]);
     }
 
-    #[Route('/deck/{id}/edit', name: 'app_deck_edit', requirements: ['id' => '\d+'])]
+    #[Route('/deck/{username}/{slug}/edit', name: 'app_deck_edit')]
     #[IsGranted('ROLE_USER')]
-    public function edit(Deck $deck, Request $request, EntityManagerInterface $em): Response
+    public function edit(string $username, string $slug, DeckRepository $deckRepository, Request $request, EntityManagerInterface $em): Response
     {
+        $deck = $deckRepository->findOneBy(['slug' => $slug]);
+        
+        if (!$deck) {
+            throw $this->createNotFoundException('Deck not found');
+        }
+        
         // Vérifier que l'utilisateur est le propriétaire
         if ($deck->getUser() !== $this->getUser()) {
             throw $this->createAccessDeniedException('Vous ne pouvez pas éditer ce deck.');
@@ -98,7 +114,10 @@ class DeckController extends AbstractController
         
         if (empty(trim($content))) {
             $this->addFlash('error', 'Comment cannot be empty.');
-            return $this->redirectToRoute('app_deck_view', ['id' => $deck->getId()]);
+            return $this->redirectToRoute('app_deck_view', [
+                'username' => $deck->getUser()->getUsername(),
+                'slug' => $deck->getSlug()
+            ]);
         }
 
         $comment = new \App\Entity\Comment();
@@ -111,7 +130,10 @@ class DeckController extends AbstractController
         $em->flush();
 
         $this->addFlash('success', 'Comment posted successfully!');
-        return $this->redirectToRoute('app_deck_view', ['id' => $deck->getId()]);
+        return $this->redirectToRoute('app_deck_view', [
+            'username' => $deck->getUser()->getUsername(),
+            'slug' => $deck->getSlug()
+        ]);
     }
 
     #[Route('/comment/{id}/delete', name: 'app_comment_delete', methods: ['POST'])]
@@ -129,13 +151,16 @@ class DeckController extends AbstractController
             throw $this->createAccessDeniedException('You cannot delete this comment.');
         }
 
-        $deckId = $comment->getDeck()->getId();
+        $deck = $comment->getDeck();
         
         $em->remove($comment);
         $em->flush();
 
         $this->addFlash('success', 'Comment deleted.');
-        return $this->redirectToRoute('app_deck_view', ['id' => $deckId]);
+        return $this->redirectToRoute('app_deck_view', [
+            'username' => $deck->getUser()->getUsername(),
+            'slug' => $deck->getSlug()
+        ]);
     }
 }
 

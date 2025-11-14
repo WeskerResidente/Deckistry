@@ -39,16 +39,35 @@
                         </button>
                     </h3>
                     <div class="filter-content active" id="advanced-filters">
+                        {# Language Filter #}
+                        <div class="filter-group">
+                            <label class="filter-label">Langue</label>
+                            <select name="lang" id="langFilter" class="filter-select">
+                                <option value="en" {{ selected_lang == 'en' ? 'selected' : '' }}>🇬🇧 English</option>
+                                <option value="es" {{ selected_lang == 'es' ? 'selected' : '' }}>🇪🇸 Español</option>
+                                <option value="fr" {{ selected_lang == 'fr' ? 'selected' : '' }}>🇫🇷 Français</option>
+                                <option value="de" {{ selected_lang == 'de' ? 'selected' : '' }}>🇩🇪 Deutsch</option>
+                                <option value="it" {{ selected_lang == 'it' ? 'selected' : '' }}>🇮🇹 Italiano</option>
+                                <option value="pt" {{ selected_lang == 'pt' ? 'selected' : '' }}>🇵🇹 Português</option>
+                                <option value="ja" {{ selected_lang == 'ja' ? 'selected' : '' }}>🇯🇵 日本語</option>
+                                <option value="ko" {{ selected_lang == 'ko' ? 'selected' : '' }}>🇰🇷 한국어</option>
+                                <option value="ru" {{ selected_lang == 'ru' ? 'selected' : '' }}>🇷🇺 Русский</option>
+                                <option value="zhs" {{ selected_lang == 'zhs' ? 'selected' : '' }}>🇨🇳 简体中文</option>
+                                <option value="zht" {{ selected_lang == 'zht' ? 'selected' : '' }}>🇹🇼 繁體中文</option>
+                                <option value="any" {{ selected_lang == 'any' ? 'selected' : '' }}>🌍 Toutes les langues</option>
+                            </select>
+                        </div>
+                        
                         {# Mana Colors #}
                         <div class="filter-group">
                             <label class="filter-label">Couleurs de mana</label>
                             <div class="logic-selector">
                                 <label class="logic-option">
-                                    <input type="radio" name="logic" value="or" checked>
+                                    <input type="radio" name="logic" value="or" {{ selected_logic == 'or' ? 'checked' : '' }}>
                                     <span>Ou</span>
                                 </label>
                                 <label class="logic-option">
-                                    <input type="radio" name="logic" value="and">
+                                    <input type="radio" name="logic" value="and" {{ selected_logic == 'and' ? 'checked' : '' }}>
                                     <span>Inclue</span>
                                 </label>
                             </div>
@@ -90,7 +109,7 @@
                         <select name="set" class="filter-select">
                             <option value="">Toutes les éditions</option>
                             {% for set in sets %}
-                                <option value="{{ set.code }}">{{ set.name }}</option>
+                                <option value="{{ set.code }}" {{ selected_set == set.code ? 'selected' : '' }}>{{ set.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -241,6 +260,9 @@
                                         {% endif %}
                                         
                                         <div class="card-overlay">
+                                            <button class="btn btn-primary btn-sm" onclick="showCardPrints('{{ card.name }}', '{{ card.id }}')">
+                                                📦 Versions
+                                            </button>
                                             <button class="btn btn-primary btn-sm" onclick="addToCollection('{{ card.id }}')">
                                                 + Collection
                                             </button>
@@ -278,7 +300,13 @@
                         {# Pagination #}
                         <div class="pagination">
                             {% if current_page > 1 %}
-                                <a href="{{ path('app_search', {q: query, page: current_page - 1}) }}" class="pagination-btn">
+                                <a href="{{ path('app_search', {
+                                    q: query, 
+                                    page: current_page - 1,
+                                    lang: selected_lang,
+                                    logic: selected_logic,
+                                    set: selected_set
+                                }) }}" class="pagination-btn">
                                     ← Précédent
                                 </a>
                             {% endif %}
@@ -286,7 +314,13 @@
                             <span class="pagination-current">Page {{ current_page }}</span>
                             
                             {% if has_more %}
-                                <a href="{{ path('app_search', {q: query, page: current_page + 1}) }}" class="pagination-btn">
+                                <a href="{{ path('app_search', {
+                                    q: query, 
+                                    page: current_page + 1,
+                                    lang: selected_lang,
+                                    logic: selected_logic,
+                                    set: selected_set
+                                }) }}" class="pagination-btn">
                                     Suivant →
                                 </a>
                             {% endif %}
@@ -328,4 +362,236 @@
         </div>
     </div>
 </div>
+
+{# Modal for card prints/versions #}
+<div id="cardPrintsModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 1200px; max-height: 90vh; overflow-y: auto;">
+        <span class="modal-close" onclick="closeCardPrintsModal()">&times;</span>
+        <h2 id="modalCardName" style="margin-bottom: 20px;"></h2>
+        <div id="modalPrintsGrid" class="prints-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;">
+            <!-- Card prints will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<style>
+.modal {
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: #2c3e50;
+    padding: 30px;
+    border-radius: 12px;
+    position: relative;
+    color: #fff;
+}
+
+.modal-close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 35px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.modal-close:hover {
+    color: #fff;
+}
+
+.prints-grid .print-item {
+    background: #1a1d1e;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.prints-grid .print-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+}
+
+.prints-grid .print-item img {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.prints-grid .print-info {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin: 5px 0;
+}
+
+.prints-grid .print-set {
+    font-weight: bold;
+    color: #4caf50;
+    margin-bottom: 5px;
+}
+
+.prints-grid .print-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.foil-checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #fff;
+    font-size: 0.9rem;
+    margin-top: 8px;
+}
+
+.foil-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.foil-checkbox label {
+    cursor: pointer;
+    user-select: none;
+}
+</style>
+
+<script>
+let currentLanguage = 'en';
+
+// Restore selected filters from server-side data
+const selectedColors = {{ selected_colors|json_encode|raw }};
+const selectedTypes = {{ selected_types|json_encode|raw }};
+const selectedRarities = {{ selected_rarities|json_encode|raw }};
+
+// Restore mana color buttons state
+document.addEventListener('DOMContentLoaded', function() {
+    // Restore color buttons
+    document.querySelectorAll('.mana-btn').forEach(btn => {
+        const color = btn.getAttribute('data-color');
+        if (selectedColors.includes(color)) {
+            btn.classList.add('active');
+        }
+    });
+    
+    // Initialize current language
+    currentLanguage = document.getElementById('langFilter')?.value || 'en';
+});
+
+// Gérer le changement de langue
+document.getElementById('langFilter')?.addEventListener('change', function() {
+    currentLanguage = this.value;
+    // Le formulaire se soumettra normalement et conservera tous les filtres
+});
+
+// Afficher toutes les versions d'une carte
+async function showCardPrints(cardName, currentCardId) {
+    const modal = document.getElementById('cardPrintsModal');
+    const modalTitle = document.getElementById('modalCardName');
+    const printsGrid = document.getElementById('modalPrintsGrid');
+    
+    modalTitle.textContent = `Versions de "${cardName}"`;
+    printsGrid.innerHTML = '<p style="text-align:center;padding:40px;">Chargement...</p>';
+    modal.style.display = 'flex';
+    
+    try {
+        const lang = document.getElementById('langFilter')?.value || 'en';
+        const response = await fetch(`/api/card-prints/${encodeURIComponent(cardName)}?lang=${lang}`);
+        const data = await response.json();
+        
+        if (data.success && data.prints.length > 0) {
+            printsGrid.innerHTML = data.prints.map(print => `
+                <div class="print-item">
+                    ${print.imageUriSmall ? 
+                        `<img src="${print.imageUriSmall}" alt="${print.name}" loading="lazy">` :
+                        '<div style="width:100%;height:280px;background:#34495e;display:flex;align-items:center;justify-content:center;">No Image</div>'
+                    }
+                    <div class="print-set">${print.setName} (${print.set.toUpperCase()})</div>
+                    <div class="print-info">#${print.collectorNumber}</div>
+                    <div class="print-info">${print.rarity}</div>
+                    ${print.prices?.eur ? `<div class="print-info">€${print.prices.eur}</div>` : ''}
+                    <div class="print-actions">
+                        <label class="foil-checkbox">
+                            <input type="checkbox" id="foil_${print.id}">
+                            <span>✨ Foil</span>
+                        </label>
+                        <button class="btn btn-primary btn-sm" onclick="addToCollectionWithOptions('${print.id}', '${print.name}')">
+                            + Collection
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            printsGrid.innerHTML = '<p style="text-align:center;padding:40px;">Aucune version trouvée</p>';
+        }
+    } catch (error) {
+        console.error('Error loading card prints:', error);
+        printsGrid.innerHTML = '<p style="text-align:center;padding:40px;color:#f44336;">Erreur lors du chargement des versions</p>';
+    }
+}
+
+function closeCardPrintsModal() {
+    document.getElementById('cardPrintsModal').style.display = 'none';
+}
+
+// Fermer la modale en cliquant en dehors
+document.getElementById('cardPrintsModal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeCardPrintsModal();
+    }
+});
+
+// Ajouter à la collection avec options (foil, etc.)
+async function addToCollectionWithOptions(cardId, cardName) {
+    const foilCheckbox = document.getElementById(`foil_${cardId}`);
+    const isFoil = foilCheckbox ? foilCheckbox.checked : false;
+    
+    try {
+        const response = await fetch('/api/collection/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                scryfallId: cardId,
+                quantity: 1,
+                isFoil: isFoil
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert(`${cardName}${isFoil ? ' (Foil)' : ''} ajoutée à votre collection !`);
+        } else {
+            alert('Erreur: ' + (data.error || 'Impossible d\'ajouter la carte'));
+        }
+    } catch (error) {
+        console.error('Error adding to collection:', error);
+        alert('Erreur lors de l\'ajout à la collection');
+    }
+}
+
+// Recherche avec langue
+async function performSearch(query, lang = 'en') {
+    // Cette fonction peut être utilisée pour rechercher avec la langue sélectionnée
+    // Pour l'instant, le formulaire se soumet normalement
+    console.log('Searching for:', query, 'in language:', lang);
+}
+</script>
 {% endblock %}

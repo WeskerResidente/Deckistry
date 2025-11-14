@@ -136,9 +136,11 @@
         
         .collection-card img {
             width: 100%;
-            height: 280px;
+            height: 350px;
             object-fit: cover;
             display: block;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
         }
         
         .card-info {
@@ -155,7 +157,23 @@
         .card-type {
             color: rgba(255, 255, 255, 0.6);
             font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+        
+        .card-set-info {
+            color: rgba(76, 175, 80, 0.8);
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+        }
+        
+        .card-price {
+            color: #ffd700;
+            font-size: 0.95rem;
+            font-weight: bold;
             margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         
         .quantity-controls {
@@ -265,6 +283,33 @@
             background: #f44336;
             transform: scale(1.1);
         }
+        
+        .foil-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: linear-gradient(135deg, #FFD700, #FFA500, #FFD700);
+            color: #000;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.5);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        .card-set-info {
+            font-size: 0.85rem;
+            color: #4caf50;
+            margin: 5px 0;
+            font-weight: 500;
+        }
     </style>
 {% endblock %}
 
@@ -304,11 +349,19 @@
         }
 
         function updateStats() {
-            const totalCards = collectionCards.reduce((sum, card) => sum + card.quantity, 0);
+            const totalCards = collectionCards.reduce((sum, card) => sum + (card.quantity || 1), 0);
             const uniqueCards = collectionCards.length;
+            
+            // Calculer le prix total
+            const totalValue = collectionCards.reduce((sum, card) => {
+                const price = parseFloat(card.price) || 0;
+                const quantity = card.quantity || 1;
+                return sum + (price * quantity);
+            }, 0);
             
             document.getElementById('total-cards').textContent = totalCards;
             document.getElementById('unique-cards').textContent = uniqueCards;
+            document.getElementById('total-value').textContent = totalValue > 0 ? `€${totalValue.toFixed(2)}` : '€--';
         }
 
         function displayCards() {
@@ -330,9 +383,9 @@
 
             grid.innerHTML = filteredCards.map(card => {
                 // Essayer tous les formats possibles d'URL d'image
-                const imageUrl = card.imageUriSmall || card.imageUri || 
-                                card.image_uri_small || card.image_uri ||
-                                (card.image_uris && (card.image_uris.small || card.image_uris.normal));
+                const imageUrl = card.imageUri || card.imageUriSmall || 
+                                card.image_uri || card.image_uri_small ||
+                                (card.image_uris && (card.image_uris.normal || card.image_uris.small));
                 
                 if (!imageUrl) {
                     console.warn('No image URL for card:', card.name, card);
@@ -343,6 +396,7 @@
                     <button class="delete-btn" onclick="removeCard('${card.scryfallId}'); event.stopPropagation();">
                         <i class="fas fa-trash"></i>
                     </button>
+                    ${card.isFoil ? '<div class="foil-badge">✨ FOIL</div>' : ''}
                     ${imageUrl ? 
                         `<img src="${imageUrl}" 
                              alt="${card.name}"
@@ -356,6 +410,8 @@
                     <div class="card-info">
                         <div class="card-name">${card.name}</div>
                         <div class="card-type">${card.typeLine || card.type_line || ''}</div>
+                        ${card.setName ? `<div class="card-set-info">${card.setName} (${(card.setCode || '').toUpperCase()})</div>` : ''}
+                        ${card.price ? `<div class="card-price">💶 €${parseFloat(card.price).toFixed(2)}</div>` : '<div class="card-price" style="opacity: 0.5;">💶 Price N/A</div>'}
                         <div class="quantity-controls">
                             <button onclick="updateQuantity('${card.scryfallId}', -1); event.stopPropagation();" 
                                     ${card.quantity <= 1 ? 'disabled' : ''}>-</button>
@@ -453,6 +509,10 @@
                 <div class="stat-item">
                     <span>Unique Cards:</span>
                     <span class="stat-value" id="unique-cards">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>Total Value:</span>
+                    <span class="stat-value" id="total-value">€0.00</span>
                 </div>
             </div>
         </div>

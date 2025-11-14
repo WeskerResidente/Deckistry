@@ -16,7 +16,7 @@
                     <h3>{{ deck.name }}</h3>
                     <p>Format: {{ deck.format }}</p>
                     <p>By: {{ deck.user.username }}</p>
-                    <a href="{{ path('app_deck_view', {id: deck.id}) }}" class="btn btn-secondary">View Deck</a>
+                    <a href="{{ path('app_deck_view', {username: deck.user.username, slug: deck.slug}) }}" class="btn btn-secondary">View Deck</a>
                 </div>
             {% endfor %}
         </div>

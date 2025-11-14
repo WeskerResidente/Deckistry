@@ -49,6 +49,9 @@ class Card
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $setName = null;
 
+    #[ORM\Column(length: 10, options: ['default' => 'en'])]
+    private ?string $lang = 'en';
+
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $colorIdentity = null;
 
@@ -199,6 +202,17 @@ class Card
         return $this;
     }
 
+    public function getLang(): ?string
+    {
+        return $this->lang;
+    }
+
+    public function setLang(string $lang): static
+    {
+        $this->lang = $lang;
+        return $this;
+    }
+
     public function getColorIdentity(): ?array
     {
         return $this->colorIdentity;
@@ -287,6 +301,7 @@ class Card
         $card->setRarity($data['rarity'] ?? null);
         $card->setSetCode($data['set'] ?? $data['setCode'] ?? null);
         $card->setSetName($data['set_name'] ?? $data['setName'] ?? null);
+        $card->setLang($data['lang'] ?? 'en');
         $card->setColorIdentity($data['color_identity'] ?? $data['colorIdentity'] ?? []);
         $card->setKeywords($data['keywords'] ?? []);
         
@@ -311,6 +326,7 @@ class Card
             'rarity' => $this->rarity,
             'setCode' => $this->setCode,
             'setName' => $this->setName,
+            'lang' => $this->lang,
             'colorIdentity' => $this->colorIdentity,
             'keywords' => $this->keywords,
         ];

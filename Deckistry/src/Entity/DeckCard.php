@@ -24,6 +24,9 @@ class DeckCard
     #[ORM\Column(type: 'integer')]
     private ?int $quantity = null;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $isFoil = false;
+
     public function getDeck(): ?Deck
     {
         return $this->deck;
@@ -60,6 +63,17 @@ class DeckCard
     public function setQuantity(int $quantity): static
     {
         $this->quantity = $quantity;
+        return $this;
+    }
+
+    public function isFoil(): bool
+    {
+        return $this->isFoil;
+    }
+
+    public function setIsFoil(bool $isFoil): static
+    {
+        $this->isFoil = $isFoil;
         return $this;
     }
 

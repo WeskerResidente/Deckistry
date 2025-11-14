@@ -120,7 +120,7 @@
                         </span>
                     </div>
                     <div class="deck-card-actions">
-                        <a href="{{ path('app_deck_view', {id: deck.id}) }}" class="btn btn-sm btn-primary">View Deck</a>
+                        <a href="{{ path('app_deck_view', {username: deck.user.username, slug: deck.slug}) }}" class="btn btn-sm btn-primary">View Deck</a>
                     </div>
                 </div>
                 {% endfor %}
@@ -159,7 +159,7 @@
                     </span>
                 </div>
                 <div class="deck-card-actions">
-                    <a href="{{ path('app_deck_view', {id: deck.id}) }}" class="btn btn-sm btn-primary">View Deck</a>
+                    <a href="{{ path('app_deck_view', {username: deck.user.username, slug: deck.slug}) }}" class="btn btn-sm btn-primary">View Deck</a>
                 </div>
             </div>
             {% endfor %}

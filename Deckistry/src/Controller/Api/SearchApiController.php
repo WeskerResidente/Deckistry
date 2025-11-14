@@ -16,6 +16,7 @@ class SearchApiController extends AbstractController
     public function search(Request $request, ScryfallService $scryfallService, CardRepository $cardRepository): JsonResponse
     {
         $query = $request->query->get('q', '');
+        $lang = $request->query->get('lang', 'en');
         
         if (strlen($query) < 2) {
             return $this->json([
@@ -26,7 +27,7 @@ class SearchApiController extends AbstractController
         }
 
         try {
-            $result = $scryfallService->searchCards($query);
+            $result = $scryfallService->searchCards($query, $lang);
             
             // Les cartes seront sauvegardées automatiquement lors de l'ajout au deck
             // Pour l'instant, on ne les sauvegarde pas ici pour éviter les erreurs de conversion DTO->Array

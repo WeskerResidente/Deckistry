@@ -88,7 +88,7 @@
             console.log('Form submitting...');
             
             // Remove old hidden inputs for filters
-            searchForm.querySelectorAll('input[name="colors[]"], input[name="logic"]').forEach(el => el.remove());
+            searchForm.querySelectorAll('input[name="colors[]"]').forEach(el => el.remove());
             
             // Get selected mana colors
             const selectedColors = [];
@@ -110,15 +110,8 @@
                 console.log('Added hidden input for color:', color);
             });
             
-            // Add color logic (you can make this toggleable later)
-            if (selectedColors.length > 0) {
-                const logicInput = document.createElement('input');
-                logicInput.type = 'hidden';
-                logicInput.name = 'logic';
-                logicInput.value = 'or'; // Default to OR logic
-                searchForm.appendChild(logicInput);
-                console.log('Added logic input: or');
-            }
+            // Logic is already handled by radio buttons in the form
+            console.log('Form will submit with all filters');
         });
     }
 

@@ -21,6 +21,7 @@ class SearchController extends AbstractController
     {
         $query = $request->query->get('q', '');
         $page = max(1, (int) $request->query->get('page', 1));
+        $lang = $request->query->get('lang', 'en');
         
         // Get filters
         $colors = $request->query->all('colors') ?? [];
@@ -103,7 +104,7 @@ class SearchController extends AbstractController
             ]);
             
             try {
-                $result = $this->scryfallService->searchCards($searchQuery, $page);
+                $result = $this->scryfallService->searchCards($searchQuery, $lang, $page);
                 $cards = $result['data'] ?? [];
                 $totalCards = $result['total_cards'] ?? 0;
                 $hasMore = $result['has_more'] ?? false;
@@ -129,6 +130,12 @@ class SearchController extends AbstractController
             'current_page' => $page,
             'error' => $error,
             'sets' => $sets,
+            'selected_lang' => $lang,
+            'selected_colors' => $colors,
+            'selected_types' => $types,
+            'selected_rarities' => $rarities,
+            'selected_set' => $set,
+            'selected_logic' => $logic,
         ]);
     }
 

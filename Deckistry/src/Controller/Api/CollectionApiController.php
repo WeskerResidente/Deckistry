@@ -29,6 +29,34 @@ class CollectionApiController extends AbstractController
             $card = $cardRepo->find($collectionCard->getScryfallId());
             
             if ($card) {
+                // Récupérer le prix depuis Scryfall
+                $price = null;
+                try {
+                    $scryfallUrl = "https://api.scryfall.com/cards/{$card->getScryfallId()}";
+                    $context = stream_context_create([
+                        'http' => [
+                            'timeout' => 5,
+                            'header' => "User-Agent: Deckistry/1.0\r\n"
+                        ]
+                    ]);
+                    $response = @file_get_contents($scryfallUrl, false, $context);
+                    
+                    if ($response !== false) {
+                        $cardData = json_decode($response, true);
+                        $isFoil = $collectionCard->isFoil();
+                        
+                        if (isset($cardData['prices'])) {
+                            if ($isFoil && isset($cardData['prices']['eur_foil'])) {
+                                $price = $cardData['prices']['eur_foil'];
+                            } elseif (!$isFoil && isset($cardData['prices']['eur'])) {
+                                $price = $cardData['prices']['eur'];
+                            }
+                        }
+                    }
+                } catch (\Exception $e) {
+                    // Prix non disponible
+                }
+                
                 $cards[] = [
                     'scryfallId' => $card->getScryfallId(),
                     'name' => $card->getName(),
@@ -39,7 +67,12 @@ class CollectionApiController extends AbstractController
                     'cmc' => $card->getCmc(),
                     'colors' => $card->getColors(),
                     'rarity' => $card->getRarity(),
+                    'setCode' => $card->getSetCode(),
+                    'setName' => $card->getSetName(),
+                    'lang' => $card->getLang(),
                     'quantity' => $collectionCard->getQuantity(),
+                    'isFoil' => $collectionCard->isFoil(),
+                    'price' => $price,
                 ];
             }
         }
@@ -60,6 +93,7 @@ class CollectionApiController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $scryfallId = $data['scryfallId'] ?? null;
         $quantity = $data['quantity'] ?? 1;
+        $isFoil = $data['isFoil'] ?? false;
 
         if (!$scryfallId) {
             return new JsonResponse(['success' => false, 'error' => 'Missing scryfallId'], 400);
@@ -104,16 +138,16 @@ class CollectionApiController extends AbstractController
                 $em->flush();
             } catch (\Exception $e) {
                 return new JsonResponse([
-                    'success' => false, 
-                    'error' => 'Error: ' . $e->getMessage()
+                    'success' => false, 'error' => 'Error: ' . $e->getMessage()
                 ], 500);
             }
         }
 
-        // Vérifier si la carte existe déjà dans la collection
+        // Vérifier si la carte existe déjà dans la collection (même foil status)
         $existingCard = $collectionRepo->findOneBy([
             'user' => $user,
-            'scryfallId' => $scryfallId
+            'scryfallId' => $scryfallId,
+            'isFoil' => $isFoil
         ]);
 
         if ($existingCard) {
@@ -132,6 +166,7 @@ class CollectionApiController extends AbstractController
         $collectionCard = new CollectionCard();
         $collectionCard->setUser($user);
         $collectionCard->setScryfallId($scryfallId);
+        $collectionCard->setIsFoil($isFoil);
         $collectionCard->setQuantity($quantity);
 
         $em->persist($collectionCard);

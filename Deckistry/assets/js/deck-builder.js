@@ -5,7 +5,6 @@
 
     // Vérifier si on est en mode visualisation
     const isViewMode = typeof DECK_VIEW_MODE !== 'undefined' && DECK_VIEW_MODE === true;
-    const deckId = typeof DECK_ID !== 'undefined' ? DECK_ID : (typeof window.deckId !== 'undefined' ? window.deckId : undefined);
 
     // État du deck
     let deckState = {
@@ -17,31 +16,50 @@
     // Map temporaire pour les cartes de recherche (évite JSON.stringify dans HTML)
     const searchCardsCache = new Map();
 
+    // ============================================
+    // MANA SYMBOLS RENDERING
+    // ============================================
+    
+    /**
+     * Convertit un coût de mana (ex: "{2}{U}{B}") en HTML avec les symboles SVG de Scryfall
+     */
+    function renderManaSymbols(manaCost) {
+        if (!manaCost) return '';
+        
+        // Parser les symboles entre accolades
+        const symbols = manaCost.match(/\{[^}]+\}/g);
+        if (!symbols) return manaCost;
+        
+        return symbols.map(symbol => {
+            // Enlever les accolades
+            const cleanSymbol = symbol.replace(/[{}]/g, '').toLowerCase();
+            
+            // URL du symbole sur Scryfall
+            const symbolUrl = `https://svgs.scryfall.io/card-symbols/${cleanSymbol}.svg`;
+            
+            return `<img src="${symbolUrl}" alt="${symbol}" class="mana-symbol" title="${symbol}">`;
+        }).join('');
+    }
+
     // Charger le deck existant
     async function loadDeck() {
-        if (typeof deckId === 'undefined') return;
+        if (typeof window.deckId === 'undefined') return;
 
         try {
-            const response = await fetch(`/api/deck/${deckId}`);
+            const response = await fetch(`/api/deck/${window.deckId}`);
             const data = await response.json();
             
             if (data.success) {
                 deckState.format = data.deck.format;
                 
-                // Charger le commander
-                if (data.deck.commanderId) {
-                    console.log('Chargement du commander:', data.deck.commanderId);
-                    // Récupérer les détails du commander depuis la carte
-                    fetch(`/api/card/${data.deck.commanderId}`)
-                        .then(res => res.json())
-                        .then(cmdData => {
-                            if (cmdData.success) {
-                                deckState.commander = cmdData.card;
-                                searchCardsCache.set(cmdData.card.id, cmdData.card);
-                                displayCommander();
-                            }
-                        })
-                        .catch(err => console.error('Erreur chargement commander:', err));
+                // Charger le commander directement depuis la réponse
+                if (data.deck.commander) {
+                    console.log('Chargement du commander:', data.deck.commander.name);
+                    deckState.commander = data.deck.commander;
+                    searchCardsCache.set(data.deck.commander.id, data.deck.commander);
+                    if (!isViewMode) {
+                        displayCommander();
+                    }
                 }
                 
                 // Charger les cartes du deck
@@ -67,6 +85,8 @@
                 } else {
                     updateDeckDisplay();
                 }
+                
+                console.log('Deck chargé. Commander:', deckState.commander?.name || 'Aucun');
             }
         } catch (error) {
             console.error('Erreur chargement deck:', error);
@@ -115,7 +135,7 @@
 
         searchResults.innerHTML = cards.map(card => `
             <div class="search-result-card" data-card-id="${card.id}">
-                <img src="${card.imageUriSmall || card.bestImageUri || ''}" 
+                <img src="${card.imageUri || card.bestImageUri || ''}" 
                      alt="${card.name}"
                      onerror="this.style.display='none'">
                 <div class="card-info">
@@ -233,9 +253,25 @@
 
     // Définir le commander
     function setCommander(card) {
-        deckState.commander = card;
-        displayCommander();
-        saveDeck();
+        // Sauvegarder la carte dans la BDD d'abord
+        fetch('/api/card/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(card)
+        }).then(() => {
+            deckState.commander = card;
+            searchCardsCache.set(card.id, card);
+            displayCommander();
+            saveDeck();
+        }).catch(err => {
+            console.error('Erreur sauvegarde commander:', err);
+            deckState.commander = card;
+            searchCardsCache.set(card.id, card);
+            displayCommander();
+            saveDeck();
+        });
     }
 
     function displayCommander() {
@@ -327,7 +363,7 @@
                 card.typeLine.includes('Land');
             
             // Fallback pour l'image
-            const imageUrl = card.imageUriSmall || card.imageUri || card.bestImageUri || '';
+            const imageUrl = card.imageUri || card.imageUriSmall || card.bestImageUri || '';
 
             return `
                 <div class="deck-card-item" data-card-id="${cardId}">
@@ -337,6 +373,7 @@
                     <div class="card-info">
                         <div class="card-name">${card.name}</div>
                         <div class="card-type">${card.typeLine || ''}</div>
+                        <div class="card-set">${card.set ? card.set.toUpperCase() : ''}</div>
                     </div>
                     ${(deckState.format !== 'Commander' || isBasicLand) ? `
                         <div class="quantity-controls">
@@ -347,6 +384,11 @@
                     ` : `
                         <span class="quantity">×${entry.quantity}</span>
                     `}
+                    <button class="change-edition-btn" onclick="openEditionModal('${cardId}')" title="Changer d'édition">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                        </svg>
+                    </button>
                     <button class="remove-card-btn" onclick="removeCard('${cardId}')">
                         Retirer
                     </button>
@@ -383,20 +425,31 @@
 
     // Sauvegarder le deck
     window.saveDeck = async function() {
-        if (typeof deckId === 'undefined') return;
+        if (typeof window.deckId === 'undefined') {
+            console.error('❌ Aucun deck ID défini');
+            showNotification('❌ Erreur: Aucun deck ID défini', 'error');
+            return;
+        }
+
+        // Afficher notification de chargement
+        showNotification('💾 Sauvegarde en cours...', 'info');
 
         const deckData = {
             commander: deckState.commander,
             cards: Array.from(deckState.cards.entries()).map(([id, entry]) => ({
                 scryfallId: id,
-                quantity: entry.quantity
+                quantity: entry.quantity,
+                isFoil: entry.isFoil || false
             }))
         };
 
-        console.log('Sauvegarde du deck avec', deckData.cards.length, 'cartes');
+        console.log('💾 Sauvegarde du deck avec', deckData.cards.length, 'cartes');
+        console.log('Commander:', deckState.commander?.name || 'Aucun');
+        console.log('Commander data:', JSON.stringify(deckState.commander));
+        console.log('Cartes:', deckData.cards.map(c => `${c.quantity}x ${searchCardsCache.get(c.scryfallId)?.name || c.scryfallId}`).join(', '));
 
         try {
-            const response = await fetch(`/api/deck/${deckId}`, {
+            const response = await fetch(`/api/deck/${window.deckId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -405,19 +458,84 @@
             });
             
             if (!response.ok) {
-                console.error('Erreur HTTP:', response.status, response.statusText);
+                const errorText = await response.text();
+                console.error('❌ Erreur HTTP:', response.status, response.statusText, errorText);
+                showNotification(`❌ Erreur: ${response.status} ${response.statusText}`, 'error');
                 return;
             }
             
             const result = await response.json();
+            console.log('Réponse serveur:', result);
+            
             if (!result.success) {
-                console.error('Erreur sauvegarde deck:', result.error || 'Erreur inconnue');
+                console.error('❌ Erreur sauvegarde deck:', result.error || 'Erreur inconnue');
+                showNotification(`❌ Erreur: ${result.error || 'Erreur inconnue'}`, 'error');
             } else {
-                console.log('✅ Deck sauvegardé avec succès');
+                console.log('✅ Deck sauvegardé avec succès!');
+                console.log('Commander sauvegardé:', result.commander);
+                console.log('Nombre de cartes:', result.cardCount);
+                showNotification('✅ Deck sauvegardé avec succès!', 'success');
             }
         } catch (error) {
             console.error('❌ Erreur sauvegarde:', error);
+            showNotification(`❌ Erreur: ${error.message}`, 'error');
         }
+    }
+
+    // Fonction pour afficher des notifications
+    function showNotification(message, type = 'info') {
+        // Supprimer les anciennes notifications
+        const oldNotifs = document.querySelectorAll('.deck-notification');
+        oldNotifs.forEach(n => n.remove());
+
+        const notification = document.createElement('div');
+        notification.className = `deck-notification deck-notification-${type}`;
+        notification.textContent = message;
+        
+        const styles = {
+            position: 'fixed',
+            top: '80px',
+            right: '20px',
+            padding: '15px 25px',
+            borderRadius: '8px',
+            color: '#fff',
+            fontWeight: 'bold',
+            zIndex: '10000',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+            animation: 'slideIn 0.3s ease-out'
+        };
+
+        if (type === 'success') {
+            styles.background = 'linear-gradient(135deg, #4caf50, #45a049)';
+        } else if (type === 'error') {
+            styles.background = 'linear-gradient(135deg, #f44336, #d32f2f)';
+        } else {
+            styles.background = 'linear-gradient(135deg, #2196F3, #1976D2)';
+        }
+
+        Object.assign(notification.style, styles);
+        document.body.appendChild(notification);
+
+        // Animation d'entrée
+        const keyframes = `
+            @keyframes slideIn {
+                from { transform: translateX(400px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        if (!document.getElementById('notif-keyframes')) {
+            const style = document.createElement('style');
+            style.id = 'notif-keyframes';
+            style.textContent = keyframes;
+            document.head.appendChild(style);
+        }
+
+        setTimeout(() => {
+            notification.style.transition = 'all 0.3s ease-out';
+            notification.style.transform = 'translateX(400px)';
+            notification.style.opacity = '0';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
     }
 
     // Valider le deck
@@ -504,8 +622,11 @@
                 <button onclick="this.closest('.validation-modal').remove()" class="btn btn-primary">Fermer</button>
             `;
         } else {
-            // Deck valide : bouton pour fermer
-            buttons = `<button onclick="this.closest('.validation-modal').remove()" class="btn btn-primary">Fermer</button>`;
+            // Deck valide : bouton pour sauvegarder et fermer
+            buttons = `
+                <button onclick="this.closest('.validation-modal').remove()" class="btn btn-secondary">Continuer l'édition</button>
+                <button onclick="saveDeck().then(() => this.closest('.validation-modal').remove())" class="btn btn-success">💾 Sauvegarder et fermer</button>
+            `;
         }
         
         modal.innerHTML = `
@@ -704,7 +825,7 @@
 
         grid.innerHTML = cards.map(card => `
             <div class="search-result-card" data-card-id="${card.id}">
-                <img src="${card.imageUriSmall || card.bestImageUri || ''}" 
+                <img src="${card.imageUri || card.bestImageUri || ''}" 
                      alt="${card.name}"
                      onerror="this.style.display='none'">
                 <div class="card-info">
@@ -758,7 +879,7 @@
                         <div class="commander-info">
                             <h3>${deckState.commander.name}</h3>
                             <p class="type">${deckState.commander.typeLine || ''}</p>
-                            <p class="mana-cost">${deckState.commander.manaCost || ''}</p>
+                            <p class="mana-cost">${renderManaSymbols(deckState.commander.manaCost)}</p>
                         </div>
                     </div>
                 `;
@@ -836,12 +957,12 @@
                             ${cards.map(({card, quantity}) => `
                                 <div class="deck-list-item">
                                     <span class="quantity">${quantity}x</span>
-                                    <img src="${card.imageUriSmall || card.imageUri || card.bestImageUri || ''}" 
+                                    <img src="${card.imageUri || card.imageUriSmall || card.bestImageUri || ''}" 
                                          alt="${card.name}"
                                          class="card-thumbnail"
                                          onerror="this.style.display='none'">
                                     <span class="card-name">${card.name}</span>
-                                    <span class="card-mana">${card.manaCost || ''}</span>
+                                    <span class="card-mana">${renderManaSymbols(card.manaCost)}</span>
                                     <span class="card-cmc">${card.cmc !== undefined ? card.cmc : ''}</span>
                                 </div>
                             `).join('')}
@@ -1000,7 +1121,7 @@
                 html += `
                     <div class="color-bar-item">
                         <div class="color-bar ${colorClasses[color]}" style="width: ${percentage}%;">
-                            <span class="color-symbol">{${color}}</span>
+                            <span class="color-symbol">${renderManaSymbols('{' + color + '}')}</span>
                         </div>
                         <div class="color-info">
                             <span class="color-name">${colorNames[color]}</span>
@@ -1037,8 +1158,394 @@
     });
 
     // ============================================
-    // INITIALISATION
+    // CARD IMPORT FUNCTIONALITY
     // ============================================
+
+    window.openImportModal = function() {
+        console.log('Opening import modal...');
+        const modal = document.getElementById('import-modal');
+        if (!modal) {
+            console.error('Import modal element not found!');
+            return;
+        }
+        modal.classList.add('active');
+        document.getElementById('import-text').value = '';
+        const status = document.getElementById('import-status');
+        if (status) status.style.display = 'none';
+    };
+
+    window.closeImportModal = function() {
+        const modal = document.getElementById('import-modal');
+        if (modal) {
+            modal.classList.remove('active');
+        }
+    };
+
+    window.handleFileImport = function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('import-text').value = e.target.result;
+            };
+            reader.readAsText(file);
+        }
+    };
+
+    window.processImport = async function() {
+        const text = document.getElementById('import-text').value.trim();
+        if (!text) {
+            showImportStatus('Please enter a decklist', 'error');
+            return;
+        }
+
+        const statusEl = document.getElementById('import-status');
+        statusEl.style.display = 'block';
+        statusEl.className = 'import-status info';
+        statusEl.innerHTML = '<div class="import-progress">Processing cards...</div>';
+
+        // Parser le texte
+        const lines = text.split('\n').filter(line => line.trim());
+        const cardRequests = [];
+        const skippedCards = [];
+        
+        for (const line of lines) {
+            const parsed = parseCardLine(line);
+            if (parsed) {
+                cardRequests.push(parsed);
+            } else if (line.includes('Maybeboard') || line.includes('noDeck')) {
+                // Extraire juste le nom de la carte pour info
+                const nameMatch = line.match(/^\d+x?\s+([^(\[]+)/);
+                if (nameMatch) {
+                    skippedCards.push(nameMatch[1].trim());
+                }
+            }
+        }
+
+        if (cardRequests.length === 0) {
+            let message = 'No valid cards found in the import';
+            if (skippedCards.length > 0) {
+                message += `<br><small>${skippedCards.length} Maybeboard cards were skipped</small>`;
+            }
+            showImportStatus(message, 'error');
+            return;
+        }
+
+        // Importer les cartes
+        let successCount = 0;
+        let failedCards = [];
+        let processedCount = 0;
+        
+        for (const request of cardRequests) {
+            processedCount++;
+            statusEl.innerHTML = `<div class="import-progress">Importing ${processedCount}/${cardRequests.length} cards...</div>`;
+            
+            try {
+                // Rechercher simplement par nom, on laissera l'utilisateur choisir l'édition après
+                const response = await fetch(`/api/search?q=${encodeURIComponent(request.name)}`);
+                const data = await response.json();
+                
+                if (data.cards && data.cards.length > 0) {
+                    const card = data.cards[0]; // Prendre la première version trouvée
+                    
+                    // Ajouter la carte au deck
+                    if (request.isCommander) {
+                        deckState.commander = card;
+                        searchCardsCache.set(card.id, card);
+                        if (!isViewMode) {
+                            displayCommander();
+                        }
+                    } else {
+                        if (deckState.cards.has(card.id)) {
+                            const existing = deckState.cards.get(card.id);
+                            existing.quantity += request.quantity;
+                        } else {
+                            deckState.cards.set(card.id, {
+                                card: card,
+                                quantity: request.quantity
+                            });
+                            searchCardsCache.set(card.id, card);
+                        }
+                    }
+                    
+                    successCount++;
+                } else {
+                    failedCards.push(request.name);
+                }
+                
+                // Petite pause pour ne pas surcharger l'API
+                await new Promise(resolve => setTimeout(resolve, 150));
+                
+            } catch (error) {
+                console.error('Error importing card:', request.name, error);
+                failedCards.push(request.name);
+            }
+        }
+
+        // Mettre à jour l'affichage
+        if (!isViewMode) {
+            updateDeckDisplay();
+        }
+
+        // Sauvegarder automatiquement
+        await saveDeck();
+
+        // Afficher le résumé
+        let message = `✅ Successfully imported ${successCount} card${successCount !== 1 ? 's' : ''}`;
+        
+        if (skippedCards.length > 0) {
+            message += `<br>ℹ️ Skipped ${skippedCards.length} Maybeboard card${skippedCards.length !== 1 ? 's' : ''}`;
+        }
+        
+        if (failedCards.length > 0) {
+            message += `<br>⚠️ Failed to import ${failedCards.length} card${failedCards.length !== 1 ? 's' : ''}: ${failedCards.slice(0, 5).join(', ')}${failedCards.length > 5 ? '...' : ''}`;
+        }
+        
+        showImportStatus(message, failedCards.length > 0 ? 'warning' : 'success');
+
+        // Fermer après 3 secondes si succès complet
+        if (failedCards.length === 0) {
+            setTimeout(() => {
+                closeImportModal();
+            }, 2000);
+        }
+    };
+
+    function parseCardLine(line) {
+        line = line.trim();
+        if (!line) return null;
+
+        // Ignorer immédiatement les lignes avec Maybeboard{noDeck}
+        if (line.includes('Maybeboard{noDeck}') || line.includes('Maybeboard{noPrice}')) {
+            return null;
+        }
+
+        // Format avec numéro de collection après le set: 6x Island (tla) 283
+        const regexWithNumber = /^(\d+)x?\s+([^(\[\{*]+?)\s*\(([^)]+)\)\s+(\d+)(?:\s*\*F\*)?(?:\s*\[([^\]]+)\])?(?:\s*\{([^}]+)\})?$/i;
+        const matchNumber = line.match(regexWithNumber);
+        
+        if (matchNumber) {
+            const quantity = parseInt(matchNumber[1]) || 1;
+            const name = matchNumber[2].trim();
+            const set = matchNumber[3].trim();
+            const collectorNumber = matchNumber[4].trim();
+            const tags = matchNumber[5] ? matchNumber[5].trim() : null;
+            const options = matchNumber[6] ? matchNumber[6].trim() : null;
+
+            return {
+                quantity,
+                name,
+                set,
+                collectorNumber,
+                tags,
+                options,
+                isCommander: false
+            };
+        }
+
+        // Format standard: 1x Sol Ring (fic) [Ramp]
+        const regex = /^(\d+)x?\s+([^(\[\{*]+?)(?:\s*\(([^)]+)\))?(?:\s*\*F\*)?(?:\s*\[([^\]]+)\])?(?:\s*\{([^}]+)\})?$/i;
+        const match = line.match(regex);
+
+        if (match) {
+            const quantity = parseInt(match[1]) || 1;
+            const name = match[2].trim();
+            const set = match[3] ? match[3].trim() : null;
+            const tags = match[4] ? match[4].trim() : null;
+            const options = match[5] ? match[5].trim() : null;
+
+            // Double vérification pour les cartes Maybeboard
+            if (tags && tags.toLowerCase().includes('maybeboard')) {
+                return null;
+            }
+            if (options && (options.toLowerCase().includes('nodeck') || options.toLowerCase().includes('maybeboard'))) {
+                return null;
+            }
+
+            // Détecter si c'est un commander
+            const isCommander = (tags && (tags.toLowerCase().includes('commander') || tags.toLowerCase().includes('top'))) ||
+                                (options && options.toLowerCase().includes('top'));
+
+            return {
+                quantity,
+                name,
+                set,
+                collectorNumber: null,
+                tags,
+                options,
+                isCommander
+            };
+        }
+
+        // Format simple: quantity name (sans 'x')
+        const simpleRegex = /^(\d+)\s+(.+)$/;
+        const simpleMatch = line.match(simpleRegex);
+        if (simpleMatch) {
+            const namePart = simpleMatch[2].trim();
+            // Vérifier que ce n'est pas une ligne Maybeboard
+            if (namePart.includes('Maybeboard') || namePart.includes('noDeck')) {
+                return null;
+            }
+            
+            return {
+                quantity: parseInt(simpleMatch[1]) || 1,
+                name: namePart,
+                set: null,
+                collectorNumber: null,
+                tags: null,
+                options: null,
+                isCommander: false
+            };
+        }
+
+        return null;
+    }
+
+    function showImportStatus(message, type = 'info') {
+        const statusEl = document.getElementById('import-status');
+        statusEl.style.display = 'block';
+        statusEl.className = `import-status ${type}`;
+        statusEl.innerHTML = message;
+    }
+
+    // ============================================
+    // CHANGE EDITION MODAL
+    // ============================================
+
+    window.openEditionModal = async function(cardId) {
+        const entry = deckState.cards.get(cardId);
+        if (!entry) return;
+        
+        const card = entry.card;
+        
+        // Créer la modale
+        const modal = document.createElement('div');
+        modal.className = 'edition-modal-overlay active';
+        modal.innerHTML = `
+            <div class="edition-modal-content">
+                <div class="edition-modal-header">
+                    <h3>Choisir une édition - ${card.name}</h3>
+                    <button class="close-btn" onclick="closeEditionModal()">×</button>
+                </div>
+                <div class="edition-loading">
+                    <div class="import-progress">Recherche des éditions...</div>
+                </div>
+                <div id="edition-results" class="edition-results"></div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Fermer en cliquant sur l'overlay
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeEditionModal();
+            }
+        });
+        
+        // Chercher toutes les éditions de cette carte via notre API
+        try {
+            // Utiliser notre API dédiée qui filtre par langue
+            const response = await fetch(`/api/card-prints/${encodeURIComponent(card.name)}?lang=en`);
+            const data = await response.json();
+            
+            console.log('Card prints API response:', data);
+            
+            if (data.success && data.prints && data.prints.length > 0) {
+                // Les données sont déjà formatées par le backend
+                const formattedCards = data.prints.map(print => ({
+                    id: print.id,
+                    name: print.name,
+                    image_uri: print.imageUri,
+                    imageUri: print.imageUri,
+                    imageUriSmall: print.imageUriSmall,
+                    set: print.set,
+                    setName: print.setName,
+                    rarity: print.rarity,
+                    collectorNumber: print.collectorNumber,
+                    prices: print.prices,
+                    foil: print.foil,
+                    nonfoil: print.nonfoil
+                }));
+                
+                displayEditionResults(formattedCards, cardId);
+            } else {
+                document.querySelector('.edition-loading').innerHTML = '<p>Aucune édition trouvée</p>';
+            }
+        } catch (error) {
+            console.error('Error fetching editions:', error);
+            document.querySelector('.edition-loading').innerHTML = '<p>Erreur lors de la recherche</p>';
+        }
+    };
+
+    function displayEditionResults(cards, cardId) {
+        const container = document.getElementById('edition-results');
+        const loadingDiv = document.querySelector('.edition-loading');
+        if (loadingDiv) {
+            loadingDiv.style.display = 'none';
+        }
+        
+        console.log('Displaying', cards.length, 'editions');
+        
+        container.innerHTML = cards.map(card => {
+            // Stocker la carte dans la cache pour pouvoir la récupérer facilement
+            searchCardsCache.set(card.id, card);
+            
+            return `
+                <div class="edition-item" onclick="selectEdition('${cardId}', '${card.id}')">
+                    <img src="${card.imageUriSmall || card.imageUri || card.image_uri || ''}" alt="${card.name}" class="edition-img" loading="lazy">
+                    <div class="edition-info">
+                        <div class="edition-name">${card.name}</div>
+                        <div class="edition-set">${card.setName || card.set?.toUpperCase() || ''}</div>
+                        <div class="edition-set">#${card.collectorNumber || ''} - ${card.rarity || ''}</div>
+                        ${card.prices?.eur ? `<div class="edition-price">€${card.prices.eur}</div>` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    window.selectEdition = function(oldCardId, newCardId) {
+        const entry = deckState.cards.get(oldCardId);
+        if (!entry) {
+            console.error('Old card not found in deckState:', oldCardId);
+            return;
+        }
+        
+        const quantity = entry.quantity;
+        const newCard = searchCardsCache.get(newCardId);
+        
+        if (!newCard) {
+            console.error('Card not found in cache:', newCardId);
+            return;
+        }
+        
+        // Supprimer l'ancienne carte
+        deckState.cards.delete(oldCardId);
+        
+        // Ajouter la nouvelle carte avec la même quantité
+        deckState.cards.set(newCardId, {
+            card: newCard,
+            quantity: quantity
+        });
+        
+        updateDeckDisplay();
+        saveDeck();
+        closeEditionModal();
+        showNotification('Édition changée avec succès', 'success');
+    };
+
+    window.closeEditionModal = function() {
+        const modal = document.querySelector('.edition-modal-overlay');
+        if (modal) {
+            modal.remove();
+        }
+    };
+
+    // ============================================
+    // INITIALIZATION
+    // ============================================
+
 
     // Charger le deck au démarrage
     loadDeck();

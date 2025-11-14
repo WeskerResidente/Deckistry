@@ -25,6 +25,9 @@ class Deck
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[ORM\Column(length: 255, unique: false)]
+    private ?string $slug = null;
+
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
@@ -205,6 +208,29 @@ class Deck
     {
         $this->commanderId = $commanderId;
         return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
+        return $this;
+    }
+
+    /**
+     * Génère automatiquement le slug à partir du nom
+     */
+    public function generateSlug(): void
+    {
+        if ($this->name) {
+            // Convertir en minuscules et remplacer les espaces/caractères spéciaux par des tirets
+            $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $this->name), '-'));
+            $this->slug = $slug;
+        }
     }
 
     /**

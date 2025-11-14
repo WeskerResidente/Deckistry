@@ -26,6 +26,9 @@ class CollectionCard
     #[ORM\Column(type: 'integer', options: ['default' => 1])]
     private ?int $quantity = 1;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $isFoil = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -61,6 +64,17 @@ class CollectionCard
     public function setQuantity(int $quantity): static
     {
         $this->quantity = $quantity;
+        return $this;
+    }
+
+    public function isFoil(): bool
+    {
+        return $this->isFoil;
+    }
+
+    public function setIsFoil(bool $isFoil): static
+    {
+        $this->isFoil = $isFoil;
         return $this;
     }
 

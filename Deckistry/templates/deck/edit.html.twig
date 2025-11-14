@@ -4,6 +4,12 @@
 
 {% block javascripts %}
     {{ parent() }}
+    <script>
+        // Définir les variables globales avant le chargement de deck-builder.js
+        window.deckId = {{ deck.id }};
+        window.deckFormat = '{{ deck.format }}';
+        window.isPrivate = {{ deck.isPrivate ? 'true' : 'false' }};
+    </script>
     {{ encore_entry_script_tags('deck-builder') }}
 {% endblock %}
 
@@ -46,6 +52,13 @@
                 <span class="deck-count">
                     <span class="card-count" id="total-cards">0</span> carte{% if deck.deckCards|length > 1 %}s{% endif %}
                 </span>
+                <button class="btn btn-icon" id="privacy-toggle" onclick="togglePrivacy()" title="Changer la visibilité">
+                    {% if deck.isPrivate %}
+                        <span class="badge badge-warning">🔒 Privé</span>
+                    {% else %}
+                        <span class="badge badge-success">🌍 Public</span>
+                    {% endif %}
+                </button>
                 <button class="btn btn-icon" onclick="toggleShareMenu()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="18" cy="5" r="3"></circle>
@@ -56,13 +69,21 @@
                     </svg>
                     Partager
                 </button>
-                <button class="btn btn-icon" onclick="window.location.href='{{ path('app_deck_view', {id: deck.id}) }}'">
+                <button class="btn btn-icon" onclick="window.location.href='{{ path('app_deck_view', {username: deck.user.username, slug: deck.slug}) }}'">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-                <button class="btn btn-primary" onclick="window.location.href='{{ path('app_deck_edit', {id: deck.id}) }}'">Modifier</button>
+                <button class="btn btn-primary" onclick="window.location.href='{{ path('app_deck_edit', {username: deck.user.username, slug: deck.slug}) }}'">Modifier</button>
+                <button class="btn btn-success" onclick="saveDeck(); return false;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                        <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                        <polyline points="7 3 7 8 15 8"></polyline>
+                    </svg>
+                    Sauvegarder
+                </button>
                 <button class="btn btn-success" onclick="validateDeck()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="20 6 9 17 4 12"></polyline>
@@ -78,6 +99,14 @@
         <div class="deck-search-panel">
             <div class="search-header">
                 <h3>Rechercher une carte</h3>
+                <button class="btn btn-secondary" onclick="openImportModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Importer des cartes
+                </button>
                 <button class="btn btn-primary" onclick="openQuickAddModal()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -311,8 +340,92 @@
     </div>
 </div>
 
+<!-- Modale d'import de cartes -->
+<div id="import-modal" class="import-modal-overlay">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-header">
+            <h3>Import Cards</h3>
+            <button class="btn-close" onclick="closeImportModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="import-instructions">
+                <details class="import-details">
+                    <summary>▶ Formatting Examples</summary>
+                    <div class="import-examples">
+                        <p><strong>Basic format:</strong></p>
+                        <code>1x Sol Ring<br>1x Command Tower<br>98x Swamp</code>
+                        
+                        <p><strong>With set code:</strong></p>
+                        <code>1x Sol Ring (c21)<br>1x Lightning Bolt (lea)</code>
+                        
+                        <p><strong>With tags:</strong></p>
+                        <code>1x Sol Ring [Ramp]<br>1x Command Tower *F* [Removal]</code>
+                        
+                        <p><strong>Archidekt format:</strong></p>
+                        <code>1x Sol Ring [Maybeboard]{noPrice}<br>1x Swamp *F* [Draw]</code>
+                    </div>
+                </details>
+                
+                <details class="import-details" open>
+                    <summary>▼ Upload exported Archidekt file</summary>
+                    <div class="import-upload">
+                        <input type="file" id="import-file" accept=".txt,.csv" style="display: none;" onchange="handleFileImport(event)">
+                        <button class="btn btn-secondary btn-block" onclick="document.getElementById('import-file').click()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                            Choose File
+                        </button>
+                    </div>
+                </details>
+            </div>
+            
+            <textarea 
+                id="import-text" 
+                class="import-textarea" 
+                placeholder="Paste your decklist here...&#10;&#10;Example:&#10;1x Sol Ring&#10;1x Command Tower&#10;98x Swamp"
+                rows="15"></textarea>
+            
+            <div class="import-status" id="import-status" style="display: none;"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeImportModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="processImport()">Import Cards</button>
+        </div>
+    </div>
+</div>
+
 <script>
-    const deckId = {{ deck.id }};
-    const deckFormat = '{{ deck.format }}';
+    async function togglePrivacy() {
+        try {
+            const response = await fetch(`/api/deck/${window.deckId}/toggle-privacy`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                window.isPrivate = result.isPrivate;
+                const button = document.getElementById('privacy-toggle');
+                if (window.isPrivate) {
+                    button.innerHTML = '<span class="badge badge-warning">🔒 Privé</span>';
+                } else {
+                    button.innerHTML = '<span class="badge badge-success">🌍 Public</span>';
+                }
+            }
+        } catch (error) {
+            console.error('Erreur lors du changement de visibilité:', error);
+            alert('Erreur lors du changement de visibilité');
+        }
+    }
 </script>
 {% endblock %}
