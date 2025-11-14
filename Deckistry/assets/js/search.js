@@ -192,9 +192,81 @@
         }, { capture: false }); // Use bubbling phase, not capture
     }
 
-    // Add to collection function (to be implemented)
-    window.addToCollection = function(cardId) {
-        alert('Fonctionnalité à venir : ajouter ' + cardId + ' à votre collection');
+    // Add to collection function
+    window.addToCollection = async function(cardId) {
+        const btn = event?.target || document.querySelector(`button[onclick*="${cardId}"]`);
+        
+        try {
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = 'Adding...';
+            }
+            
+            const response = await fetch('/api/collection/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    scryfallId: cardId,
+                    quantity: 1
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Show success message
+                if (btn) {
+                    btn.textContent = '✓ Added!';
+                    btn.style.background = '#4caf50';
+                    btn.disabled = false;
+                    
+                    setTimeout(() => {
+                        btn.textContent = '+ Collection';
+                        btn.style.background = '';
+                    }, 2000);
+                }
+            } else {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = '+ Collection';
+                }
+                alert('Error: ' + (data.error || 'Could not add card to collection'));
+            }
+        } catch (error) {
+            console.error('Error adding to collection:', error);
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = '+ Collection';
+            }
+            alert('Error adding card to collection. Please try again.');
+        }
+    };
+
+    // Flip card function for double-faced cards
+    window.flipCard = function(cardId) {
+        const wrapper = document.querySelector(`.card-image-wrapper[data-card-id="${cardId}"]`);
+        if (!wrapper) return;
+        
+        const img = wrapper.querySelector('.card-image');
+        if (!img) return;
+        
+        const frontImage = img.getAttribute('data-front-image');
+        const backImage = img.getAttribute('data-back-image');
+        
+        if (!backImage) return; // Not a double-faced card
+        
+        // Toggle between front and back
+        if (img.classList.contains('card-face-front')) {
+            img.src = backImage;
+            img.classList.remove('card-face-front');
+            img.classList.add('card-face-back');
+        } else {
+            img.src = frontImage;
+            img.classList.remove('card-face-back');
+            img.classList.add('card-face-front');
+        }
     };
     });
 })();

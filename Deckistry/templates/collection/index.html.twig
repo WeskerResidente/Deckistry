@@ -2,10 +2,485 @@
 
 {% block title %}My Collection - Deckistry{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .collection-page {
+            background: #1a1d1e;
+            min-height: 100vh;
+            padding: 80px 0 60px;
+        }
+        
+        .collection-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 40px 0;
+            margin-bottom: 40px;
+            border-bottom: 3px solid #4caf50;
+        }
+        
+        .collection-header h1 {
+            margin: 0 0 10px 0;
+            color: #fff;
+            font-size: 2.5rem;
+        }
+        
+        .collection-stats {
+            display: flex;
+            gap: 30px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: #4caf50;
+            font-size: 1.3rem;
+        }
+        
+        .collection-controls {
+            background: #2c3e50;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .search-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .search-bar input {
+            flex: 1;
+            padding: 12px 20px;
+            background: #1a1d1e;
+            border: 2px solid rgba(76, 175, 80, 0.3);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+        }
+        
+        .search-bar input:focus {
+            outline: none;
+            border-color: #4caf50;
+        }
+        
+        .search-bar button {
+            padding: 12px 30px;
+            background: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .search-bar button:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+        
+        .filter-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            background: #1a1d1e;
+            color: #fff;
+            border: 2px solid rgba(76, 175, 80, 0.3);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn.active {
+            background: #4caf50;
+            border-color: #4caf50;
+        }
+        
+        .collection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .collection-card {
+            background: #2c3e50;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .collection-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+        }
+        
+        .collection-card img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .card-info {
+            padding: 15px;
+        }
+        
+        .card-name {
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        
+        .card-type {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+        
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #1a1d1e;
+            padding: 8px;
+            border-radius: 6px;
+        }
+        
+        .quantity-controls button {
+            width: 30px;
+            height: 30px;
+            background: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        
+        .quantity-controls button:hover {
+            background: #45a049;
+        }
+        
+        .quantity-controls button:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+        
+        .quantity-display {
+            color: #4caf50;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .empty-collection {
+            text-align: center;
+            padding: 80px 20px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .empty-collection i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: rgba(76, 175, 80, 0.3);
+        }
+        
+        .empty-collection h2 {
+            color: #fff;
+            margin-bottom: 15px;
+        }
+        
+        .btn-add-card {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-add-card:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #fff;
+        }
+        
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 35px;
+            height: 35px;
+            background: rgba(244, 67, 54, 0.9);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        
+        .collection-card:hover .delete-btn {
+            opacity: 1;
+        }
+        
+        .delete-btn:hover {
+            background: #f44336;
+            transform: scale(1.1);
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        let collectionCards = [];
+        let filteredCards = [];
+
+        // Charger la collection
+        async function loadCollection() {
+            try {
+                console.log('Loading collection...');
+                const response = await fetch('/api/collection');
+                const data = await response.json();
+                
+                console.log('Collection API response:', data);
+                
+                if (data.success) {
+                    collectionCards = data.cards;
+                    filteredCards = [...collectionCards];
+                    console.log('Loaded', collectionCards.length, 'cards');
+                    
+                    // Log first card for debugging
+                    if (collectionCards.length > 0) {
+                        console.log('First card example:', collectionCards[0]);
+                    }
+                    
+                    updateStats();
+                    displayCards();
+                } else {
+                    console.error('Failed to load collection:', data);
+                }
+            } catch (error) {
+                console.error('Error loading collection:', error);
+            }
+        }
+
+        function updateStats() {
+            const totalCards = collectionCards.reduce((sum, card) => sum + card.quantity, 0);
+            const uniqueCards = collectionCards.length;
+            
+            document.getElementById('total-cards').textContent = totalCards;
+            document.getElementById('unique-cards').textContent = uniqueCards;
+        }
+
+        function displayCards() {
+            const grid = document.getElementById('collection-grid');
+            
+            if (filteredCards.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-collection" style="grid-column: 1/-1;">
+                        <i class="fas fa-box-open"></i>
+                        <h2>No cards in your collection</h2>
+                        <p>Start building your collection by searching for cards</p>
+                        <a href="/search" class="btn-add-card">
+                            <i class="fas fa-search"></i> Search Cards
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filteredCards.map(card => {
+                // Essayer tous les formats possibles d'URL d'image
+                const imageUrl = card.imageUriSmall || card.imageUri || 
+                                card.image_uri_small || card.image_uri ||
+                                (card.image_uris && (card.image_uris.small || card.image_uris.normal));
+                
+                if (!imageUrl) {
+                    console.warn('No image URL for card:', card.name, card);
+                }
+                
+                return `
+                <div class="collection-card" data-card-id="${card.scryfallId}">
+                    <button class="delete-btn" onclick="removeCard('${card.scryfallId}'); event.stopPropagation();">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    ${imageUrl ? 
+                        `<img src="${imageUrl}" 
+                             alt="${card.name}"
+                             loading="lazy"
+                             onerror="console.error('Failed to load image for ${card.name}:', this.src); this.src='https://via.placeholder.com/200x280/2c3e50/ffffff?text=No+Image';">` :
+                        `<div style="width:100%;height:280px;background:#2c3e50;display:flex;align-items:center;justify-content:center;color:#fff;flex-direction:column;">
+                            <i class="fas fa-image" style="font-size:3rem;opacity:0.3;margin-bottom:10px;"></i>
+                            <span>No Image</span>
+                        </div>`
+                    }
+                    <div class="card-info">
+                        <div class="card-name">${card.name}</div>
+                        <div class="card-type">${card.typeLine || card.type_line || ''}</div>
+                        <div class="quantity-controls">
+                            <button onclick="updateQuantity('${card.scryfallId}', -1); event.stopPropagation();" 
+                                    ${card.quantity <= 1 ? 'disabled' : ''}>-</button>
+                            <span class="quantity-display">${card.quantity}x</span>
+                            <button onclick="updateQuantity('${card.scryfallId}', 1); event.stopPropagation();">+</button>
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        async function updateQuantity(scryfallId, change) {
+            try {
+                const card = collectionCards.find(c => c.scryfallId === scryfallId);
+                if (!card) return;
+
+                const newQuantity = card.quantity + change;
+                if (newQuantity < 1) return;
+
+                const response = await fetch('/api/collection/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ scryfallId, quantity: newQuantity })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    card.quantity = newQuantity;
+                    updateStats();
+                    displayCards();
+                }
+            } catch (error) {
+                console.error('Error updating quantity:', error);
+            }
+        }
+
+        async function removeCard(scryfallId) {
+            if (!confirm('Remove this card from your collection?')) return;
+
+            try {
+                const response = await fetch('/api/collection/remove', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ scryfallId })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    collectionCards = collectionCards.filter(c => c.scryfallId !== scryfallId);
+                    filteredCards = filteredCards.filter(c => c.scryfallId !== scryfallId);
+                    updateStats();
+                    displayCards();
+                }
+            } catch (error) {
+                console.error('Error removing card:', error);
+            }
+        }
+
+        function searchCards() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            
+            if (!query) {
+                filteredCards = [...collectionCards];
+            } else {
+                filteredCards = collectionCards.filter(card => {
+                    const name = (card.name || '').toLowerCase();
+                    const typeLine = (card.typeLine || card.type_line || '').toLowerCase();
+                    const manaCost = (card.manaCost || card.mana_cost || '').toLowerCase();
+                    
+                    return name.includes(query) || 
+                           typeLine.includes(query) ||
+                           manaCost.includes(query);
+                });
+            }
+            
+            console.log('Search query:', query, 'Found:', filteredCards.length, 'cards');
+            displayCards();
+        }
+
+        // Charger au démarrage
+        loadCollection();
+    </script>
+{% endblock %}
+
 {% block body %}
-<div class="container" style="padding: 60px 0;">
-    <h1>{{ message }}</h1>
-    <p>Collection manager coming soon!</p>
-    <a href="{{ path('app_home') }}" class="btn btn-primary">Back to Home</a>
+<div class="collection-page">
+    <div class="collection-header">
+        <div class="container">
+            <h1><i class="fas fa-book"></i> My Collection</h1>
+            <div class="collection-stats">
+                <div class="stat-item">
+                    <span>Total Cards:</span>
+                    <span class="stat-value" id="total-cards">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>Unique Cards:</span>
+                    <span class="stat-value" id="unique-cards">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="collection-controls">
+            <div class="search-bar">
+                <input type="text" 
+                       id="search-input" 
+                       placeholder="Search your collection..." 
+                       onkeyup="if(event.key==='Enter') searchCards()">
+                <button onclick="searchCards()">
+                    <i class="fas fa-search"></i> Search
+                </button>
+                <a href="{{ path('app_search') }}" class="btn-add-card">
+                    <i class="fas fa-plus"></i> Add Cards
+                </a>
+            </div>
+        </div>
+
+        <div id="collection-grid" class="collection-grid">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin" style="font-size: 3rem;"></i>
+                <p>Loading your collection...</p>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
+

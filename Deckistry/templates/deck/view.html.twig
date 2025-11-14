@@ -1,11 +1,204 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}View Deck - Deckistry{% endblock %}
+{% block title %}{{ deck.name }} - Deckistry{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('deck-builder') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        window.DECK_ID = {{ deck.id }};
+        window.DECK_VIEW_MODE = true;
+    </script>
+    {{ encore_entry_script_tags('deck-builder') }}
+{% endblock %}
 
 {% block body %}
-<div class="container" style="padding: 60px 0;">
-    <h1>Deck #{{ deckId }}</h1>
-    <p>Deck details coming soon!</p>
-    <a href="{{ path('app_decks') }}" class="btn btn-primary">Back to Decks</a>
+<div class="deck-view-page">
+    <!-- Header -->
+    <div class="deck-view-header">
+        <div class="container">
+            <div class="deck-view-header-content">
+                <div class="deck-view-title">
+                    <h1>{{ deck.name }}</h1>
+                    <div class="deck-view-meta">
+                        <span class="deck-format">{{ deck.format }}</span>
+                        {% if deck.isPrivate %}
+                            <span class="badge badge-warning">🔒 Private</span>
+                        {% else %}
+                            <span class="badge badge-success">🌍 Public</span>
+                        {% endif %}
+                        <span class="deck-author">by {{ deck.user.username }}</span>
+                        <span class="deck-date">{{ deck.createdAt|date('M d, Y') }}</span>
+                    </div>
+                    {% if deck.description %}
+                        <p class="deck-description">{{ deck.description }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="deck-view-actions">
+                    <a href="{{ path('app_decks') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Decks
+                    </a>
+                    {% if app.user and deck.user == app.user %}
+                        <a href="{{ path('app_deck_edit', {id: deck.id}) }}" class="btn btn-primary">
+                            <i class="fas fa-edit"></i> Edit Deck
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deck Content -->
+    <div class="deck-view-content">
+        <div class="container">
+            <div class="deck-view-grid">
+                <!-- Main Content -->
+                <div class="deck-view-main">
+                    <!-- Commander Section -->
+                    <div id="commander-section" class="deck-view-section" style="display: none;">
+                        <h2>Commander</h2>
+                        <div id="commander-display" class="commander-card-display"></div>
+                    </div>
+
+                    <!-- Deck List -->
+                    <div class="deck-view-section">
+                        <h2>Deck List (<span id="total-cards">0</span> cards)</h2>
+                        <div id="deck-list-view" class="deck-list-categorized"></div>
+                    </div>
+
+                    <!-- Comments Section -->
+                    <div class="deck-view-section">
+                        <h2>Comments (<span id="comments-count">{{ deck.comments|length }}</span>)</h2>
+                        
+                        {% if app.user %}
+                            <div class="comment-form">
+                                <form method="post" action="{{ path('app_deck_comment', {id: deck.id}) }}" id="comment-form">
+                                    <div class="form-group">
+                                        <textarea name="content" 
+                                                  class="form-control" 
+                                                  rows="4" 
+                                                  placeholder="Share your thoughts about this deck..."
+                                                  required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-comment"></i> Post Comment
+                                    </button>
+                                </form>
+                            </div>
+                        {% else %}
+                            <div class="comment-login-prompt">
+                                <p><a href="{{ path('app_login') }}">Log in</a> to leave a comment</p>
+                            </div>
+                        {% endif %}
+
+                        <div class="comments-list">
+                            {% if deck.comments|length > 0 %}
+                                {% for comment in deck.comments %}
+                                    <div class="comment-item" data-comment-id="{{ comment.id }}">
+                                        <div class="comment-header">
+                                            <div class="comment-author">
+                                                {% if comment.user.avatar %}
+                                                    <img src="{{ asset('uploads/avatars/' ~ comment.user.avatar) }}" 
+                                                         alt="{{ comment.user.username }}"
+                                                         class="comment-avatar">
+                                                {% else %}
+                                                    <div class="comment-avatar-placeholder">
+                                                        {{ comment.user.username|slice(0, 1)|upper }}
+                                                    </div>
+                                                {% endif %}
+                                                <span class="author-name">{{ comment.user.username }}</span>
+                                            </div>
+                                            <div class="comment-meta">
+                                                <span class="comment-date">{{ comment.createdAt|date('M d, Y \\a\\t H:i') }}</span>
+                                                {% if app.user and (comment.user == app.user or deck.user == app.user) %}
+                                                    <button class="btn-delete-comment" 
+                                                            data-comment-id="{{ comment.id }}"
+                                                            title="Delete comment">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="comment-content">
+                                            {{ comment.content|nl2br }}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="no-comments">
+                                    <p>No comments yet. Be the first to share your thoughts!</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="deck-view-sidebar">
+                    <!-- Stats -->
+                    <div class="deck-stats-card">
+                        <h3>Deck Statistics</h3>
+                        <div class="stat-item">
+                            <span class="stat-label">Total Cards:</span>
+                            <span class="stat-value" id="stat-total">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Commander:</span>
+                            <span class="stat-value" id="stat-commander">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Creatures:</span>
+                            <span class="stat-value" id="stat-creatures">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Instants:</span>
+                            <span class="stat-value" id="stat-instants">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Sorceries:</span>
+                            <span class="stat-value" id="stat-sorceries">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Enchantments:</span>
+                            <span class="stat-value" id="stat-enchantments">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Artifacts:</span>
+                            <span class="stat-value" id="stat-artifacts">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Planeswalkers:</span>
+                            <span class="stat-value" id="stat-planeswalkers">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Lands:</span>
+                            <span class="stat-value" id="stat-lands">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Avg. CMC:</span>
+                            <span class="stat-value" id="stat-avg-cmc">0.0</span>
+                        </div>
+                    </div>
+
+                    <!-- Mana Curve -->
+                    <div class="deck-stats-card">
+                        <h3>Mana Curve</h3>
+                        <div id="mana-curve" class="mana-curve-chart"></div>
+                    </div>
+
+                    <!-- Color Distribution -->
+                    <div class="deck-stats-card">
+                        <h3>Color Distribution</h3>
+                        <div id="color-distribution" class="color-distribution-chart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

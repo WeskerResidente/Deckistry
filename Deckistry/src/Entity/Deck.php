@@ -28,8 +28,20 @@ class Deck
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[ORM\Column(length: 50)]
+    private ?string $format = 'Commander';
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $isPrivate = false;
+
     #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $createdAt = null;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $updatedAt = null;
+
+    #[ORM\Column(type: 'string', length: 36, nullable: true)]
+    private ?string $commanderId = null;
 
     #[ORM\OneToMany(targetEntity: DeckCard::class, mappedBy: 'deck', cascade: ['persist', 'remove'])]
     private Collection $deckCards;
@@ -86,6 +98,28 @@ class Deck
         return $this;
     }
 
+    public function getFormat(): ?string
+    {
+        return $this->format;
+    }
+
+    public function setFormat(string $format): static
+    {
+        $this->format = $format;
+        return $this;
+    }
+
+    public function isPrivate(): bool
+    {
+        return $this->isPrivate;
+    }
+
+    public function setIsPrivate(bool $isPrivate): static
+    {
+        $this->isPrivate = $isPrivate;
+        return $this;
+    }
+
     public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->createdAt;
@@ -94,6 +128,17 @@ class Deck
     public function setCreatedAt(\DateTimeInterface $createdAt): static
     {
         $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
         return $this;
     }
 
@@ -148,6 +193,17 @@ class Deck
                 $comment->setDeck(null);
             }
         }
+        return $this;
+    }
+
+    public function getCommanderId(): ?string
+    {
+        return $this->commanderId;
+    }
+
+    public function setCommanderId(?string $commanderId): static
+    {
+        $this->commanderId = $commanderId;
         return $this;
     }
 

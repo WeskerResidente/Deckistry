@@ -43,9 +43,9 @@
                         Decks
                     </a>
                     {% if app.user %}
-                    <a href="{{ path('app_deck_builder') }}" class="header-nav-link">
+                    <a href="{{ path('app_deck_new') }}" class="header-nav-link">
                         <span class="nav-icon">✨</span>
-                        Deck Builder
+                        New Deck
                     </a>
                     <a href="{{ path('app_collection') }}" class="header-nav-link">
                         <span class="nav-icon">💎</span>
@@ -115,7 +115,7 @@
                     <div class="footer-section">
                         <h3>Product</h3>
                         <ul class="footer-links">
-                            <li><a href="{{ path('app_deck_builder') }}">Deck Builder</a></li>
+                            <li><a href="{{ path('app_deck_new') }}">Deck Builder</a></li>
                             <li><a href="{{ path('app_search') }}">Card Search</a></li>
                             <li><a href="{{ path('app_collection') }}">Collection Manager</a></li>
                             <li><a href="{{ path('app_decks') }}">Browse Decks</a></li>

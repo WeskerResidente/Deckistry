@@ -29,6 +29,10 @@ class CardDTO
         public readonly ?float $eurPrice = null,
         public readonly ?float $usdPrice = null,
         public readonly ?string $scryfallUri = null,
+        public readonly bool $isDoubleFaced = false,
+        public readonly ?string $backImageUriSmall = null,
+        public readonly ?string $backImageUriNormal = null,
+        public readonly ?string $backImageUriLarge = null,
     ) {}
 
     /**
@@ -40,9 +44,13 @@ class CardDTO
         // For these layouts, some data is only in card_faces
         $hasFaces = isset($data['card_faces']) && is_array($data['card_faces']) && count($data['card_faces']) > 0;
         $firstFace = $hasFaces ? $data['card_faces'][0] : [];
+        $secondFace = ($hasFaces && isset($data['card_faces'][1])) ? $data['card_faces'][1] : null;
         
         // Image URIs: use root level first, fallback to first face
         $imageUris = $data['image_uris'] ?? ($firstFace['image_uris'] ?? null);
+        
+        // Back face image URIs (for double-faced cards)
+        $backImageUris = $secondFace['image_uris'] ?? null;
         
         // Mana cost: use root level first, fallback to first face
         $manaCost = $data['mana_cost'] ?? ($firstFace['mana_cost'] ?? null);
@@ -76,6 +84,10 @@ class CardDTO
             eurPrice: isset($data['prices']['eur']) ? (float)$data['prices']['eur'] : null,
             usdPrice: isset($data['prices']['usd']) ? (float)$data['prices']['usd'] : null,
             scryfallUri: $data['scryfall_uri'] ?? null,
+            isDoubleFaced: $hasFaces && $secondFace !== null && isset($secondFace['image_uris']),
+            backImageUriSmall: $backImageUris['small'] ?? null,
+            backImageUriNormal: $backImageUris['normal'] ?? null,
+            backImageUriLarge: $backImageUris['large'] ?? null,
         );
     }
 
@@ -112,6 +124,17 @@ class CardDTO
         return $this->imageUriNormal 
             ?? $this->imageUriLarge 
             ?? $this->imageUriSmall 
+            ?? null;
+    }
+
+    /**
+     * Get best available back image URI (for double-faced cards)
+     */
+    public function getBestBackImageUri(): ?string
+    {
+        return $this->backImageUriNormal 
+            ?? $this->backImageUriLarge 
+            ?? $this->backImageUriSmall 
             ?? null;
     }
 }

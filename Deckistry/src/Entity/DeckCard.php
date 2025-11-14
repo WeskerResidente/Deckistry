@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: DeckCardRepository::class)]
 #[ORM\Table(name: 'deck_cards')]
 #[ORM\Index(name: 'idx_deck_cards_deck_id', columns: ['deck_id'])]
-#[ORM\Index(name: 'idx_deck_cards_scryfall_id', columns: ['scryfall_id'])]
+#[ORM\Index(name: 'idx_deck_cards_card_id', columns: ['card_id'])]
 class DeckCard
 {
     #[ORM\Id]
@@ -17,8 +17,9 @@ class DeckCard
     private ?Deck $deck = null;
 
     #[ORM\Id]
-    #[ORM\Column(length: 255)]
-    private ?string $scryfallId = null;
+    #[ORM\ManyToOne(targetEntity: Card::class)]
+    #[ORM\JoinColumn(name: 'card_id', referencedColumnName: 'scryfall_id', nullable: false)]
+    private ?Card $card = null;
 
     #[ORM\Column(type: 'integer')]
     private ?int $quantity = null;
@@ -34,15 +35,21 @@ class DeckCard
         return $this;
     }
 
-    public function getScryfallId(): ?string
+    public function getCard(): ?Card
     {
-        return $this->scryfallId;
+        return $this->card;
     }
 
-    public function setScryfallId(string $scryfallId): static
+    public function setCard(?Card $card): static
     {
-        $this->scryfallId = $scryfallId;
+        $this->card = $card;
         return $this;
+    }
+
+    // Méthode de compatibilité pour l'ancien code
+    public function getScryfallId(): ?string
+    {
+        return $this->card?->getScryfallId();
     }
 
     public function getQuantity(): ?int
@@ -58,6 +65,6 @@ class DeckCard
 
     public function __toString(): string
     {
-        return $this->scryfallId . ' x' . $this->quantity;
+        return ($this->card?->getName() ?? 'Unknown') . ' x' . $this->quantity;
     }
 }

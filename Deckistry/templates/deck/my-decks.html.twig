@@ -4,7 +4,21 @@
 
 {% block body %}
 <div class="container" style="padding: 60px 0;">
-    <h1>{{ message }}</h1>
-    <a href="{{ path('app_home') }}" class="btn btn-primary">Back to Home</a>
+    <h1>My Decks</h1>
+    
+    {% if decks is empty %}
+        <p>Vous n'avez pas encore de decks.</p>
+        <a href="{{ path('app_deck_new') }}" class="btn btn-primary">Créer un deck</a>
+    {% else %}
+        <div class="decks-grid">
+            {% for deck in decks %}
+                <div class="deck-card">
+                    <h3>{{ deck.name }}</h3>
+                    <p>Format: {{ deck.format }}</p>
+                    <a href="{{ path('app_deck_edit', {id: deck.id}) }}" class="btn btn-primary">Éditer</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 </div>
 {% endblock %}
